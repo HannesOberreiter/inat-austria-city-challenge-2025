@@ -1,0 +1,27 @@
+---
+title: "City Nature Challenge 2025: Industrieviertel"
+lang: 'de-AT'
+execute:
+  warning: false
+  error: false
+  echo: false
+order: 3
+date: last-modified
+date-format: "YYYY-MM-DDTHH:mm:ssZ"
+---
+
+- https://www.inaturalist.org/projects/city-nature-challenge-2025-industrieviertel
+
+{{< include _init.qmd >}}
+
+
+```{r init}
+#| include: false
+#| cache: false
+projectId <- c("Industrieviertel" = "231426")
+obsResults <- loadObs(projectId)
+
+```
+
+{{< include _body.qmd >}}
+

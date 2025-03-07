@@ -1,0 +1,25 @@
+---
+title: "Demo - Projekt"
+lang: 'de-AT'
+execute:
+  warning: false
+  error: false
+order: 11
+date: last-modified
+date-format: "YYYY-MM-DDTHH:mm:ssZ"
+---
+
+- [inaturalist.org/projects/beehive-fauna](https://www.inaturalist.org/projects/beehive-fauna)
+
+{{< include _init.qmd >}}
+
+
+```{r init}
+#| include: false
+#| cache: false
+projectId <- c("Demo" = "27173")
+obsResults <- loadObs(projectId)
+```
+
+{{< include _body.qmd >}}
+

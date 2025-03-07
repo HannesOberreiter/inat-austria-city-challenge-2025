@@ -1,0 +1,25 @@
+---
+title: "City Nature Challenge 2025: Krems - Wachau - Melk"
+lang: 'de-AT'
+execute:
+  warning: false
+  error: false
+  echo: false
+order: 6
+date: last-modified
+date-format: "YYYY-MM-DDTHH:mm:ssZ"
+---
+
+- https://www.inaturalist.org/projects/city-nature-challenge-2025-krems-wachau-melk
+
+{{< include _init.qmd >}}
+
+```{r init}
+#| include: false
+#| cache: false
+projectIds <- c("Krems" = "220961")
+obsResults <- loadObs(projectIds)
+```
+
+{{< include _body.qmd >}}
+

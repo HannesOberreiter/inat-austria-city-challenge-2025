@@ -1,0 +1,25 @@
+---
+title: "City Nature Challenge 2025: Marchegg"
+lang: 'de-AT'
+execute:
+  warning: false
+  error: false
+  echo: false
+order: 6
+date: last-modified
+date-format: "YYYY-MM-DDTHH:mm:ssZ"
+---
+
+- https://www.inaturalist.org/projects/city-nature-challenge-2025-marchegg
+
+{{< include _init.qmd >}}
+
+```{r init}
+#| include: false
+#| cache: false
+projectIds <- c("Marchegg" = "229928")
+obsResults <- loadObs(projectIds)
+```
+
+{{< include _body.qmd >}}
+

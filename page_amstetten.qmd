@@ -1,0 +1,26 @@
+---
+title: "City Nature Challenge 2025: Amstetten - Waidhofen/Ybbs"
+lang: 'de-AT'
+execute:
+  warning: false
+  error: false
+  echo: false
+order: 2
+date: last-modified
+date-format: "YYYY-MM-DDTHH:mm:ssZ"
+---
+
+- https://www.inaturalist.org/projects/city-nature-challenge-2025-amstetten-waidhofen-ybbs
+
+{{< include _init.qmd >}}
+
+
+```{r init}
+#| include: false
+#| cache: false
+projectId <- c("Amstetten" = "228551")
+obsResults <- loadObs(projectId)
+```
+
+{{< include _body.qmd >}}
+

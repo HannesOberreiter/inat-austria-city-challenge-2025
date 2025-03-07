@@ -1,0 +1,176 @@
+```{r settings}
+#| include: false
+library(glue)
+library(ggplot2)
+library(scales)
+library(tidyr)
+library(dplyr)
+library(jsonlite)
+library(readr)
+library(stringr)
+library(rmarkdown)
+library(DT)
+library(lubridate)
+library(leaflet)
+library(data.table)
+library(furrr)
+library(purrr)
+
+theme_set(theme_classic(base_size = 12))
+colorBlindBlack8 <- c(
+    "#464343", "#E69F00", "#56B4E9", "#009E73",
+    "#F0E442", "#0072B2", "#D55E00", "#CC79A7",
+    "#750a0f", "#669c8e", "#ffaabb", "#cbbb45"
+)
+options(ggplot2.discrete.colour = colorBlindBlack8)
+options(ggplot2.discrete.fill = colorBlindBlack8)
+
+```
+
+```{r projectIds}
+#| include: false
+#| cache: true
+
+projectIds <- c("Mittelkärnten" = "218931", "Gesäuse" = "225285", "Industrieviertel" = "231426", "Krems" = "220961", "Marchegg" = "229928", "St.Pölten" = "228867", "Elsbeere" = "225365", "Neusiedlersee" = "224160", "Amstetten" = "228551", "Graz" = "220708", "Innsbruck" = "226061", "Wien" = "224108")
+```
+
+
+```{r loadData}
+#| include: false
+#| cache: true
+
+if (file.exists('data/checkList.rds')) {
+  checkList = readRDS('data/checkList.rds')
+  birdsList = readRDS('data/birdsList.rds')
+  taxas = readRDS('data/taxas.rds')
+} else {
+  # RedList
+  checkList <- fread(
+      "data/data_species_check_list.csv", sep = ",", dec=".", stringsAsFactors = FALSE, encoding = "UTF-8", colClasses = "character"
+    ) |>
+    rename(scientific_name = speciesname) |>
+    distinct(scientific_name, .keep_all = TRUE) |>
+    filter((annex_II_priority != "N" | annex_II != "N" | annex_IV != "N")) 
+  # Birds RedList
+  birdsList <- fread("data/birds.csv", sep = ";", dec=".", stringsAsFactors = FALSE, encoding = "UTF-8", colClasses = "character") |>
+    rename_with(~"scientific_name", 1) |>
+    select(scientific_name, `Annex I`) |>
+    rename(AnnexI = `Annex I`) |>
+    drop_na(AnnexI)
+# German Common Names
+  taxasDE <- fread(
+      'data/VernacularNames-german.csv', sep = ",", dec=".", stringsAsFactors = FALSE, encoding = "UTF-8", colClasses = "character"
+    )[, .(vernacularName = stringr::str_trunc(paste(vernacularName, collapse = ', '), 35)), by = id]
+
+  # Full Taxon Tree Names
+  taxas <- fread('data/taxa.csv', sep = ",", dec=".", stringsAsFactors = FALSE, encoding = "UTF-8", colClasses = "character")[
+    taxasDE, on = "id"][, .(id, scientificName, vernacularName, taxonRank, kingdom, phylum, class, order, family, genus, specificEpithet, infraspecificEpithet)]
+
+  rm(taxasDE)
+  saveRDS(checkList, 'data/checkList.rds')
+  saveRDS(taxas, 'data/taxas.rds')
+  saveRDS(birdsList, 'data/birdsList.rds')
+}
+```
+
+```{r loadFunctions}
+#| include: false
+
+fetchTxt <- function(url){
+  return(base::url(url, headers = c(Accept = "application/json, text/*, */*", "User-Agent" = "inat-austria-city-challenge-2025")))
+}
+
+loadObs <- function(projectId, maxLoops = 1000){
+   tryCatch(
+     exp = {
+      checkIfFileExists <- file.exists(glue("data/obs_{projectId}.csv"))
+      if(checkIfFileExists){
+        print("File exists, loading from file")
+        obsResults <- fread(
+          glue("data/obs_{projectId}.csv"), sep = ",", dec=".", stringsAsFactors = FALSE, encoding = "UTF-8", colClasses = "character"
+        )
+        return(obsResults)
+      }
+      apiEndpoint <- "https://api.inaturalist.org/v2/observations"
+      fields <- "(id:!t,uri:!t,quality_grade:!t,num_identification_disagreements:!t,time_observed_at:!t,location:!t,user:(name:!t,id:!t,login:!t),taxon:(id:!t),identifications:(user:(name:!t,login:!t)))"
+      perPage <- 200
+      staticQuery <- glue("project_id={projectId}&order=asc&order_by=id&per_page={perPage}&fields={fields}")
+      
+      aboveId <- 1
+      obsList <- list()
+      loopCounter <- 1
+      while (aboveId > 0) {
+        start_time <- Sys.time()
+
+        obsUrl <- glue("{apiEndpoint}?{staticQuery}&id_above={aboveId}")
+        print(obsUrl)
+        obsFetch <- fetchTxt(obsUrl) |> jsonlite::fromJSON()
+        totalResults <- obsFetch$total_results
+        if(totalResults == 0){
+          print("Empty results")
+          break;
+        }
+        
+        obsTempResults <- obsFetch$results |> unnest(c(taxon, user), names_sep = ".")
+        aboveId = max(obsTempResults$id)
+        obsList[[loopCounter]] <- obsTempResults |>
+          mutate(across(everything(), as.character)) |>
+          mutate(
+            # Dirty workaround for later parsing of list
+            identifications = str_replace_all(identifications, "\'", "`"),
+            identifications = str_replace_all(identifications, "\"", "'")
+            )
+        
+        if(totalResults <= perPage){
+          print("No more fetches needed")
+          break;
+        }
+        
+        print("Remaining Obs")
+        print(totalResults - perPage)
+        print("Loops to finish")
+        print((totalResults - perPage) / perPage)
+        print("Loops done")
+        print(loopCounter)
+        
+        if(loopCounter >= maxLoops){
+          print("Breaking early because max loop limit")
+          break;
+        }
+        
+        loopCounter <- loopCounter + 1
+        elapsed_time <- Sys.time() - start_time
+        sleep_time <- max(0, 1 - as.numeric(elapsed_time, units = "secs"))
+        Sys.sleep(sleep_time)
+      }
+      if(length(obsList) == 0){
+        print("No results")
+        return(NULL)
+      }
+      obsResults <- bind_rows(obsList) |>
+        left_join(taxas, by = c("taxon.id" = "id"))|> 
+        mutate(
+          user.name = ifelse(is.na(user.name) | user.name == '', user.login, user.name),
+          project.id = projectId,
+          project.name = names(projectId),
+          uri_html = glue("<a href='{uri}'>{id}</a>"),
+        ) |>
+        distinct(uuid, .keep_all = TRUE) # catch any possible double entries due to our loop logic
+      return(obsResults)
+     },
+    error = function(e){
+      message('Caught an error!')
+      print(e)
+      return(NULL)
+    },
+    warning = function(w){
+      message('Caught an warning!')
+      print(w)
+      return(NULL)
+    },
+    finally = {
+      message('All done, quitting.')
+    }
+  )
+}
+```

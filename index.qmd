@@ -1,0 +1,119 @@
+---
+title: "City Nature Challenges in Österreich, 25.-28. April 2025"
+lang: 'de-AT'
+execute:
+  warning: false
+  error: false
+  echo: false
+order: 1
+format:
+    html:
+        df-print: paged
+date: last-modified
+date-format: "YYYY-MM-DDTHH:mm:ssZ"
+---
+
+- [https://www.citynaturechallenge.at/](https://www.citynaturechallenge.at/)
+- [inaturalist.org/projects/city-nature-challenges-in-oesterreich-2025](https://www.inaturalist.org/projects/city-nature-challenges-in-oesterreich-2025)
+
+
+<i style="color: red;">
+  Anmerkung: Folgende Regionen werden von uns nicht ausgewertet, diese finden sie auf observation.org unter:
+  <ul>
+    <li><a href="https://observation.org/bioblitz/salzburg-cnc-2025/">Salzburg CNC 2025</a></li>
+    <li><a href="https://observation.org/bioblitz/vorarlberg-cnc-2025/">Vorarlberg CNC 2025</a></li>
+  </ul>
+</i>
+
+{{< include _init.qmd >}}
+
+```{r init}
+#| include: false
+#| cache: false
+obsResultsList <- list()
+for(i in 1:length(projectIds)){
+  tempResult <- loadObs(projectIds[i])
+  if(!is.null(tempResult)){
+    write_csv(tempResult, paste0("data/obs_", projectIds[i], ".csv"), quote = "all")
+    obsResultsList[[i]] <- tempResult
+  }
+}
+obsResults <- bind_rows(obsResultsList)
+if(nrow(obsResults) == 0){
+  obsResults = NULL
+}
+```
+
+```{r CompareProjects}
+#| label: fig-projects
+#| fig-cap: "Anzahl der Beobachtungen in den einzelnen Projekt Regionen"
+if(!is.null(obsResults)){
+  obsResults |>
+    group_by(project.name) |>
+    summarise(n = n()) |>
+    ggplot(
+      aes(x = reorder(project.name, n), y = n, fill = project.name)
+      ) +
+    geom_bar(stat = "identity", show.legend = FALSE) +
+    coord_flip() +
+    labs(x = "", y = "Anzahl der Beobachtungen")+
+    theme(
+      panel.grid.major.x = element_line()
+    )
+} else {
+  print('Noch keine Beobachtungen')
+}
+```
+
+
+
+## Indizes zwischen den Regionen
+
+```{r CompareProjects2}
+if(!is.null(obsResults)){
+  obsResults |>
+    group_by(project.name) |>
+    summarise(
+      nObserver = n_distinct(user.name),
+      nObservations = n(),
+      nTaxa = n_distinct(scientificName),
+      nResearchGrade = sum(quality_grade == "research"),
+      ) |>
+    select("Region" = project.name, "BeobachterInnen" = nObserver, "Beobachtungen" = nObservations, "Taxa" = nTaxa, "Research Grade" = nResearchGrade) |>
+    datatable(rownames = FALSE)
+} else {
+  print('Noch keine Beobachtungen')
+}
+```
+
+## Beobachtungen Regnum
+
+```{r plotRegnum}
+#| label: fig-Regnum
+#| fig-cap: Absolute Anzahl der Beobachtungen pro Reich, aufgeteilt in teilnehmende Regionen
+if(!is.null(obsResults)){
+  obsResults |> 
+    drop_na(kingdom) |> 
+    count(kingdom, project.name) |> 
+    select(n, "Region" = project.name, kingdom) |>
+    ggplot() +
+      aes(x = kingdom, y = n, fill = Region) +
+      geom_bar(position = 'dodge', stat='identity', show.legend = TRUE) +
+      labs(
+        y = "Beobachtungen pro Reich [#]",
+        x = ""
+      ) +
+      scale_y_continuous(
+        labels = scales::label_number(),
+      ) +
+      coord_flip(clip="off") +
+      theme(
+        panel.grid.major.x = element_line()
+      )
+} else {
+  print('Noch keine Beobachtungen')
+}
+```
+
+
+{{< include _body.qmd >}}

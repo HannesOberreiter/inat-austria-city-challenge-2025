@@ -1,0 +1,26 @@
+---
+title: "About"
+order: 10
+execute:
+  warning: false
+  error: false
+  echo: false
+about:
+  template: jolla
+  links:
+    - icon: file-person-fill
+      text: CV
+      href: https://www.btree.at/de/cv/
+    - icon: linkedin
+      text: Linkedin
+      href: https://www.linkedin.com/in/hannes-oberreiter-214a30265/
+    - icon: github
+      text: Github
+      href: https://github.com/HannesOberreiter
+---
+
+Auswertung der österreichischen iNaturalist City Challenge. Seite wird automatisch alle paar Stunden aktualisiert. Die Daten werden von [iNaturalist](https://www.inaturalist.org/) bereitgestellt.
+
+<hr/>
+
+Made by [Hannes Oberreiter](https://www.btree.at) with the help of [R](https://www.r-project.org/), [Quarto](https://quarto.org/) and many other great Open Source tools.
