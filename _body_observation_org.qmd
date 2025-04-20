@@ -1,0 +1,410 @@
+```{r statsDistinct}
+if(!is.null(obsResults)){
+  distinctObserver <- obsResults$user_detail_id |> unique()
+  distinctSpecies <- obsResults |> 
+    filter(species_detail_type == 'S' | species_detail_type == 'I') |>
+    pull(species) |>
+    unique()
+
+  statsObserver <- obsResults |> 
+    count(obsResults$user_detail_id) |>
+    summarise(
+        mean = round(mean(n), 1),
+        median = median(n),
+    )
+
+} else {
+  distinctObserver <- c()
+  distinctSpecies <- c()
+  statsObserver <- tibble(mean = c(0), median = c(0))
+}
+```
+
+Insgesamt wurden **`r nrow(obsResults)`** Beobachtungen von **`r length(distinctObserver)`** Beobachterinnen und Beobachtern hochgeladen. Das ergibt einen Mittelwert von **`r statsObserver$mean[1]`** Beobachtungen pro Beobachter bzw. Beobachterin und einen Median von **`r statsObserver$median[1]`**. Auf Spezies-Ebene wurden **`r length(distinctSpecies)`** Beobachtungen hochgeladen.
+
+```{r plotUserHistogram}
+#| label: fig-histo
+#| fig-cap: "Histogramm der Beobachtungen pro Beobachter/in"
+if(!is.null(obsResults)){
+  obsResults |>
+    count(obsResults$user_detail_id) |>
+    ggplot(aes(x = n)) +
+    geom_histogram(bins = 30, fill = 'steelblue', color = 'black') +
+    labs(
+      x = 'Anzahl Beobachtungen',
+      y = 'Anzahl Beobachter/innen'
+    ) +
+    scale_y_continuous(
+      breaks = scales::pretty_breaks(),
+    ) +
+    scale_x_continuous(
+      breaks = scales::pretty_breaks(),
+    ) +
+    theme(
+      panel.grid.major.y = element_line()
+    )
+} else {
+  print('Noch keine Beobachtungen')
+}
+```
+
+```{r plotUserTime}
+#| label: fig-time
+#| fig-cap: "In welcher Stunde an welchen Wochentag wie viele Beobachtungen gemacht wurden"
+if(!is.null(obsResults)){
+  tempDf <- obsResults |> 
+    drop_na(time)
+  if(nrow(tempDf) > 0) {
+    obsResults |> 
+      drop_na(time) |>
+      mutate(
+        time_observed_at = lubridate::ymd(date, tz = "Europe/Vienna", quiet = TRUE),
+        time = glue::glue("{time}:00") |> as.character(),
+        hour_observed_at = hms::as_hms(time),
+        weekday_observed_at = lubridate::wday(
+          time_observed_at, 
+          label = TRUE,
+          week_start = 1,
+          locale="de_AT"
+          )
+      ) |>
+      select(time_observed_at, weekday_observed_at, hour_observed_at)  |>
+      ggplot(aes(x = hour_observed_at, fill = weekday_observed_at)) +
+      geom_histogram(binwidth = 60*60, color = 'black') +
+      labs(
+        x = 'Stunde',
+        y = 'Anzahl Beobachtungen',
+        fill = 'Wochentag'
+      ) +
+      scale_y_continuous(
+        breaks = scales::pretty_breaks(),
+      ) +
+      scale_x_time(
+        breaks = scales::breaks_width("1 hour"),
+        labels = scales::label_time(format = "%H")
+      ) +
+      theme(
+        panel.grid.major.y = element_line()
+      ) + 
+      facet_wrap(~weekday_observed_at, ncol = 1)
+  }
+} else {
+  print('Noch keine Beobachtungen')
+}
+```
+
+## Beobachtungskarte
+
+```{r mapObs}
+if(!is.null(obsResults)){
+  mapDf <- obsResults |>
+    unnest_wider(point, names_sep = "_") |>
+    drop_na(point_type, point_coordinates) |>
+    mutate(
+        latitude = map_dbl(point_coordinates, ~ .x[[1]][2]), 
+        longitude = map_dbl(point_coordinates, ~ .x[[1]][1]) 
+    ) |>
+    mutate(
+      time_observed_at = lubridate::ymd_hms(time_observed_at, tz = "Europe/Vienna", quiet = TRUE),
+      label = glue("{user_detail_name} <br/> {species_detail_scientific_name} <br/> {time_observed_at} <br/> <a href='{permalink}'>Beobachtung auf Observation.org</a>"),
+      group = lubridate::wday(
+        date, 
+        label = TRUE,
+        week_start = 1,
+        locale="de_AT"
+      )
+    )
+  mapDfSplit <- split(mapDf, mapDf$group)
+
+  m <- leaflet() |> # create map with dataset
+    setView(lng = 14.12456, lat = 47.59397, zoom = 6) |> # fyi geographic center of austria
+    addTiles()
+
+
+  for(name in names(mapDfSplit)){
+    if(nrow(mapDfSplit[[name]]) > 0){
+    m <- m |>
+      addCircleMarkers(
+        data = mapDfSplit[[name]],
+        lng = ~longitude,
+        lat = ~latitude,
+        popup = ~label,
+        label = ~species_detail_scientific_name,
+        group = name,
+        clusterOptions = markerClusterOptions()
+      )
+    }
+  }
+  m |>
+    addLayersControl(
+      overlayGroups = names(mapDfSplit),
+      options = layersControlOptions(collapsed = FALSE)
+    )
+} else {
+  print('Noch keine Beobachtungen')
+}
+```
+
+## Fun Facts
+  
+```{r funFacts}
+if(!is.null(obsResults)){
+  mostDuplicatedObservations <- obsResults |>
+    filter(species_detail_type == 'S' | species_detail_type == 'I') |>
+    count(user_detail_id, user_detail_name, species_detail_scientific_name) |>
+    slice_max(n = 1, order_by = n, with_ties = FALSE)
+
+  longestName <- obsResults |>
+    filter(species_detail_type == 'S' | species_detail_type == 'I') |>
+    mutate(
+      nameLength = nchar(species_detail_scientific_name)
+    ) |>
+    slice_max(n = 1, order_by = nameLength, with_ties = FALSE)
+} else {
+  mostDuplicatedObservations <- tibble(user.id = c(0), user_detail_name = c(0), species_detail_scientific_name = c(0), n = c(0))
+  longestName <- tibble(species_detail_scientific_name = c(0), nameLength = c(0))
+}
+```
+
+Besonders liebt der User bzw. die Userin **`r mostDuplicatedObservations$user_detail_name[1]`** die Art *`r mostDuplicatedObservations$species_detail_scientific_name[1]`*, die er/sie bereits `r mostDuplicatedObservations$n[1]` Mal hochgeladen hat. Das Taxon mit dem längsten Namen ist **_`r longestName$species_detail_scientific_name[1]`_**, das `r longestName$nameLength[1]` Zeichen lang ist.
+
+## Top Beobachter/innen
+
+In dieser Liste werden auch doppelte Beobachtungen gezählt, jedoch sollte dies nicht als Tipp betrachtet werden, um an erster Stelle zu stehen.
+
+```{r tableTopObserver}
+#| label: tbl-topObserver
+#| tbl-cap: Beobachter/innen und deren Uploads geordnet nach Anzahl der Beobachtungen.
+
+if(!is.null(obsResults)){
+  obsResults |> 
+    count(user_detail_id, user_detail_name) |>
+    arrange(desc(n)) |>
+    select('Beob. [#]' = n, 'User' = user_detail_name) |>
+    datatable(rownames = FALSE)
+} else {
+  print('Noch keine Beobachtungen')
+}
+```
+
+## Top Beobachter/innen mit den meisten unterschiedlichen Arten
+
+Nur Beobachtungen zumindest auf Spezies-Ebene und nur Arten mit einem positiven Validiterungs Status. 
+
+```{r tableTopObserverSpecies}
+#| label: tbl-topObserverSpecies
+#| tbl-cap: Liste der Beobachter/Innen und Anzahl der unterschiedlichen Arten.
+
+if(!is.null(obsResults)){
+  obsResults |> 
+    filter((species_detail_type == 'S' | species_detail_type == 'I') & validation_status %in% c("J", "A", "P")) |>
+    distinct(species_detail_scientific_name, user_detail_id, .keep_all = TRUE) |>
+    count(user_detail_id, user_detail_name) |>
+    arrange(desc(n)) |>
+    select('Uniques [#]' = n, 'User' = user_detail_name) |>
+    datatable(rownames = FALSE)
+} else {
+  print('Noch keine Beobachtungen')
+}
+```
+
+## Top Taxa (Spezies-Ebene)
+
+In dieser Liste sind die am häufigsten beobachteten Taxa auf Spezies-Ebene aufgeführt, die bereits verifiziert wurden.
+
+```{r tableTopTaxa}
+#| label: tbl-topTaxa
+#| tbl-cap: Taxa mit Research-Grade auf Spezies-Ebene geordnet nach Anzahl der Beobachtungen.
+if(!is.null(obsResults)){
+  obsResults |> 
+    filter((species_detail_type == 'S' | species_detail_type == 'I') & validation_status %in% c("J", "A", "P")) |>
+    count(species_detail_scientific_name, species_detail_name) |> 
+    arrange(desc(n)) |>
+    select('Beob. [#]' = n, 'Wiss. Name' = species_detail_scientific_name, 'Umgangspr. Name' = species_detail_name) |>
+    datatable(rownames = FALSE)
+} else {
+  print('Noch keine Beobachtungen')
+}
+```
+
+## Unique Verifizierte Taxa 
+
+Besonders erfreulich sind natürlich immer einzigartige Funde, die nur von einer Person in der Challenge hochgeladen wurden.
+
+```{r tableUniqueTaxa}
+#| label: tbl-uniqueTaxa
+#| tbl-cap: Einmalige verfizierte Taxa mit auf Spezies-Ebene inklusive Angabe des Users.
+if(!is.null(obsResults)){
+  obsResults |> 
+    filter((species_detail_type == 'S' | species_detail_type == 'I') & validation_status %in% c("J", "A", "P")) |>
+    add_count(species_detail_scientific_name, species_detail_name) |> 
+    filter(n == 1) |> 
+    select('Wiss. Name' = species_detail_scientific_name, 'Umgangspr. Name' = species_detail_name,  'User' = user_detail_name, "Link" = uri_html) |>
+    datatable(
+      rownames = FALSE, 
+      escape = FALSE,
+      options = list(
+        columnDefs = list(list(type = 'html', targets = c(3)
+        )
+      )
+))
+} else {
+  print('Noch keine Beobachtungen')
+}
+```
+
+## Raritäten
+
+Observation.org hat eine eigene Einteilung in Seltenheiten.
+
+```{r plotQuality}
+#| label: fig-Quality
+#| fig-cap: "Verteilung des Raritäten Level auf observation.org"
+if(!is.null(obsResults)){
+  obsResults |> 
+    count(rarity_name) |> 
+    arrange(desc(n)) |>
+    mutate(
+      np = n / nrow(obsResults),
+      quality_grade = forcats::fct_reorder(rarity_name, np, .desc = TRUE)
+    ) |> 
+    ggplot() +
+      aes(x = rarity_name, y = np, fill = rarity_name) +
+      geom_bar(position = 'dodge', stat='identity', show.legend = FALSE) +
+      geom_text(aes(label=paste("n =", n)), position=position_dodge(width=0.9), hjust=-0.25) +
+      labs(
+        y = "Beobachtungen Rarität [%]",
+        x = ""
+      ) +
+      scale_y_continuous(
+        labels = scales::percent_format(),
+        limits = c(0, 1)
+      ) +
+      coord_flip(clip="off") +
+      theme(
+        panel.grid.major.x = element_line()
+      )
+} else {
+  print('Noch keine Beobachtungen')
+}
+```
+
+## Beobachtungen mit Rarität "selten"
+
+```{r tableRarityTaxa}
+#| label: tbl-rarityTaxa
+#| tbl-cap: Beobachtungen die laut observation.org selten sind.
+if(!is.null(obsResults)){
+  obsResults |> 
+    filter(rarity >= 3) |>
+    add_count(species_detail_scientific_name, species_detail_name) |> 
+    filter(n == 1) |> 
+    select('Wiss. Name' = species_detail_scientific_name, 'Umgangspr. Name' = species_detail_name,  'User' = user_detail_name, "Link" = uri_html, "Level" = rarity_name) |>
+    datatable(
+      rownames = FALSE, 
+      escape = FALSE,
+      options = list(
+        columnDefs = list(list(type = 'html', targets = c(3)
+        )
+      )
+))
+} else {
+  print('Noch keine Beobachtungen')
+}
+```
+
+## Verifizierungs Status
+
+Observation.org unterteilt die Beobachtungen in unterschiedliche Verifikationen.
+
+```{r plotVerification}
+#| label: fig-verification
+#| fig-cap: "Verteilung des Validitierungsstatus auf observation.org"
+if(!is.null(obsResults)){
+  obsResults |> 
+    count(validation_status_name) |> 
+    arrange(desc(n)) |>
+    mutate(
+      np = n / nrow(obsResults),
+      quality_grade = forcats::fct_reorder(validation_status_name, np, .desc = TRUE)
+    ) |> 
+    ggplot() +
+      aes(x = quality_grade, y = np, fill = quality_grade) +
+      geom_bar(position = 'dodge', stat='identity', show.legend = FALSE) +
+      geom_text(aes(label=paste("n =", n)), position=position_dodge(width=0.9), hjust=-0.25) +
+      labs(
+        y = "Beobachtungen Status [%]",
+        x = ""
+      ) +
+      scale_y_continuous(
+        labels = scales::percent_format(),
+        limits = c(0, 1)
+      ) +
+      coord_flip(clip="off") +
+      theme(
+        panel.grid.major.x = element_line()
+      )
+} else {
+  print('Noch keine Beobachtungen')
+}
+```
+
+## Beobachtungen die nicht verizifiert werden können
+
+Hier werden alle Beobachtungen angezeigt die nicht verizifiert werden können oder nicht genehmigt wurden.
+
+```{r tableConflict}
+#| label: tbl-Conflict
+#| tbl-cap: Unverfizierte Beobachtungen
+if(!is.null(obsResults)){
+  obsResults |> 
+    filter(validation_status %in% c("N", "U")) |>
+    select("Link" = uri_html, "User" = user_detail_name, "Taxa" = species_detail_scientific_name) |>
+    datatable(
+      rownames = FALSE,
+      escape = FALSE,
+      options = list(
+        columnDefs = list(list(type = 'html', targets = c(1)))
+      )
+    )
+} else {
+  print('Noch keine Beobachtungen')
+}
+```
+
+## Rote Liste
+
+*Anmerkung: Keine Ahnung wie aktuell meine Rote Liste ist.*
+
+```{r tableCheckList}
+#| label: tbl-CheckList
+#| tbl-cap: Beobachtungen die zumindest in einem EU Land auf der Roten Liste stehen inklusive Anzahl der Beobachtungen.
+if(!is.null(obsResults)){
+  checkList |> 
+    right_join(obsResults, by = c("scientific_name" = "species_detail_scientific_name")) |>
+    drop_na(annex_II) |>
+    add_count(scientific_name) |> 
+    count(scientific_name, species_detail_name, annex_II_priority, annex_II, annex_IV) |> 
+    arrange(scientific_name) |> 
+    select("Wiss. Name" = scientific_name, "Umgangspr. Name" = species_detail_name, annex_II_priority, annex_II, annex_IV, "Beob. (#)" = n) |>
+    datatable(rownames = FALSE)
+} else {
+  print('Noch keine Beobachtungen')
+}
+```
+
+```{r tableBirdsList}
+#| label: tbl-BirdsList
+#| tbl-cap: Vogel Beobachtungen die zumindest in einem EU Land auf der Roten Liste AnnexI stehen inklusive Anzahl der Beobachtungen.
+if(!is.null(obsResults)){
+  birdsList |> 
+    right_join(obsResults, by = c("scientific_name" = "species_detail_scientific_name")) |>
+    drop_na(AnnexI) |>
+    arrange(scientific_name) |> 
+    count(scientific_name, species_detail_name, AnnexI) |> 
+    select("Wiss. Name" = scientific_name, "Umgangspr. Name" = species_detail_name, AnnexI, "Beob. (#)" = n) |>
+    datatable(rownames = FALSE)
+} else {
+  print('Noch keine Beobachtungen')
+}
+```

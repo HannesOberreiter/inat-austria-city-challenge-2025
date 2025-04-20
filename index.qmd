@@ -18,11 +18,7 @@ date-format: "YYYY-MM-DDTHH:mm:ssZ"
 
 
 <i style="color: red;">
-  Anmerkung: Folgende Regionen werden von uns nicht ausgewertet, diese finden sie auf observation.org unter:
-  <ul>
-    <li><a href="https://observation.org/bioblitz/salzburg-cnc-2025/">Salzburg CNC 2025</a></li>
-    <li><a href="https://observation.org/bioblitz/vorarlberg-cnc-2025/">Vorarlberg CNC 2025</a></li>
-  </ul>
+  Anmerkung: Salzburg und Vorarlberg sind nur in der Einzel Region Analyse vorhanden, da diese von einer anderen Plattform kommen.
 </i>
 
 {{< include _init.qmd >}}

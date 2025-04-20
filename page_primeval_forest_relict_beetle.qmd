@@ -26,15 +26,26 @@ relictSpecies <- readr::read_csv2("data/primeval_forest_relict_beetle.csv")
 #| include: false
 #! cache: false
 obsResultsList <- list()
+bioResultList <- list()
 for(i in 1:length(projectIds)){
     tempResult <- loadObs(projectIds[i])
     obsResultsList[[i]] <- tempResult
 }
+for(i in 1:length(locationIds)){
+    tempResult <- loadBio(locationIds[i])
+    bioResultList[[i]] <- tempResult
+}
 obsResults <- bind_rows(obsResultsList)
+bioResults <- bind_rows(bioResultList)
 if(nrow(obsResults) == 0){
   obsResults = NULL
 }
+if(nrow(bioResults) == 0){
+  bioResults = NULL
+}
 ```
+
+## iNaturalist Projekte
 
 ```{r relictTable}
 if(!is.null(obsResults)){
@@ -49,6 +60,39 @@ if(!is.null(obsResults)){
         "Kategorie" = Category, 
         "Region" = project.name, 
         'Umgangspr. Name' = vernacularName
+        ) |>
+    datatable(
+      rownames = FALSE, 
+      escape = FALSE,
+      filter = list(
+        position = 'bottom',
+        clear = FALSE,
+        plain = TRUE
+     ),
+      options = list(
+        columnDefs = list(list(type = 'html', targets = c(1)))
+      )
+    )
+} else {
+  print('Noch keine Beobachtungen')
+}
+```
+
+## Observation.org Projekte
+
+```{r relictTableBio}
+if(!is.null(bioResults)){
+  bioResults |> 
+    #filter((species_type_name == 'species' | taxonRank == 'subspecies')) |>
+    left_join(relictSpecies, by = c('species_detail_scientific_name' = 'Species')) |>
+    filter(!is.na(Category)) |>
+    select(
+        "Link" = uri_html,
+        "Spezies" = species_detail_scientific_name, 
+        "Familie" = Family, 
+        "Kategorie" = Category, 
+        "Region" = project.name, 
+        'Umgangspr. Name' = species_detail_name
         ) |>
     datatable(
       rownames = FALSE, 

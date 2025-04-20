@@ -43,10 +43,10 @@ website:
             text: "St.Pölten"
           - file: page_elsbeere.qmd
             text: "Elsbeere Wienerwald"
-          - href: https://observation.org/bioblitz/salzburg-cnc-2025/
-            text: "Salzburg 🔗"
-          - href: https://observation.org/bioblitz/vorarlberg-cnc-2025/
-            text: "Vorarlberg 🔗"
+          - href: page_salzburg.qmd
+            text: "Salzburg"
+          - href: page_vorarlberg.qmd
+            text: "Vorarlberg"
       - text: "Nationalparks"
         menu:
           - file: page_nationalpark_gesaeuse.qmd
