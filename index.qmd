@@ -31,7 +31,7 @@ for(i in 1:length(projectIds)){
   }
 }
 for(i in 1:length(locationIds)){
-  tempResult <- loadObs(locationIds[i], date_after = "2024-01-01", date_before = "2024-01-01")
+  tempResult <- loadObs(locationIds[i])
   if(!is.null(tempResult)){
     write_csv(tempResult, paste0("data/obs_", locationIds[i], ".csv"), quote = "all")
     resultsDfList[[i]] <- tempResult

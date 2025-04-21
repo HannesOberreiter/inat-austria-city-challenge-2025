@@ -32,9 +32,9 @@ options(ggplot2.discrete.fill = colorBlindBlack8)
 #| include: false
 #| cache: true
 
-projectIds <- c("Demo" = "27173")
+#projectIds <- c("Demo" = "27173")
 
-#projectIds <- c("Mittelkärnten" = "218931", "Gesäuse" = "225285", "Industrieviertel" = "231426", "Krems" = "220961", "Marchegg" = "229928", "St.Pölten" = "228867", "Elsbeere" = "225365", "Neusiedlersee" = "224160", "Amstetten" = "228551", "Graz" = "220708", "Innsbruck" = "226061", "Wien" = "224108")
+projectIds <- c("Mittelkärnten" = "218931", "Gesäuse" = "225285", "Industrieviertel" = "231426", "Krems" = "220961", "Marchegg" = "229928", "St.Pölten" = "228867", "Elsbeere" = "225365", "Neusiedlersee" = "224160", "Amstetten" = "228551", "Graz" = "220708", "Innsbruck" = "226061", "Wien" = "224108")
 
 # Observation.org
 locationIds <- c("Salzburg" = "606489", "Vorarlberg" = "606492")
