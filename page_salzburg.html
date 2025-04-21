@@ -52,6 +52,28 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Suchen"
   }
 }</script>
+<link href="site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+<script src="site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<link href="site_libs/leaflet-1.3.1/leaflet.css" rel="stylesheet">
+<script src="site_libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="site_libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet">
+<script src="site_libs/proj4-2.6.2/proj4.min.js"></script>
+<script src="site_libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="site_libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet">
+<script src="site_libs/leaflet-binding-2.2.2/leaflet.js"></script>
+<link href="site_libs/leaflet-markercluster-1.0.5/MarkerCluster.css" rel="stylesheet">
+<link href="site_libs/leaflet-markercluster-1.0.5/MarkerCluster.Default.css" rel="stylesheet">
+<script src="site_libs/leaflet-markercluster-1.0.5/leaflet.markercluster.js"></script>
+<script src="site_libs/leaflet-markercluster-1.0.5/leaflet.markercluster.freezable.js"></script>
+<script src="site_libs/leaflet-markercluster-1.0.5/leaflet.markercluster.layersupport.js"></script>
+<link href="site_libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
+<script src="site_libs/datatables-binding-0.33/datatables.js"></script>
+<link href="site_libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="site_libs/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet">
+<script src="site_libs/dt-core-1.13.6/js/jquery.dataTables.min.js"></script>
+<link href="site_libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet">
+<script src="site_libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
 
 
 <link rel="stylesheet" href="assets/styles.css">
@@ -195,16 +217,22 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Auf dieser Seite</h2>
    
   <ul>
-  <li><a href="#beobachtungskarte" id="toc-beobachtungskarte" class="nav-link active" data-scroll-target="#beobachtungskarte">Beobachtungskarte</a></li>
+  <li><a href="#allgemeine-information" id="toc-allgemeine-information" class="nav-link active" data-scroll-target="#allgemeine-information">Allgemeine Information</a></li>
+  <li><a href="#beobachtungskarte" id="toc-beobachtungskarte" class="nav-link" data-scroll-target="#beobachtungskarte">Beobachtungskarte</a></li>
   <li><a href="#fun-facts" id="toc-fun-facts" class="nav-link" data-scroll-target="#fun-facts">Fun Facts</a></li>
   <li><a href="#top-beobachterinnen" id="toc-top-beobachterinnen" class="nav-link" data-scroll-target="#top-beobachterinnen">Top Beobachter/innen</a></li>
+  <li><a href="#top-bestimmerinnen-inaturalist" id="toc-top-bestimmerinnen-inaturalist" class="nav-link" data-scroll-target="#top-bestimmerinnen-inaturalist">Top Bestimmer/Innen (iNaturalist)</a></li>
   <li><a href="#top-beobachterinnen-mit-den-meisten-unterschiedlichen-arten" id="toc-top-beobachterinnen-mit-den-meisten-unterschiedlichen-arten" class="nav-link" data-scroll-target="#top-beobachterinnen-mit-den-meisten-unterschiedlichen-arten">Top Beobachter/innen mit den meisten unterschiedlichen Arten</a></li>
   <li><a href="#top-taxa-spezies-ebene" id="toc-top-taxa-spezies-ebene" class="nav-link" data-scroll-target="#top-taxa-spezies-ebene">Top Taxa (Spezies-Ebene)</a></li>
-  <li><a href="#unique-verifizierte-taxa" id="toc-unique-verifizierte-taxa" class="nav-link" data-scroll-target="#unique-verifizierte-taxa">Unique Verifizierte Taxa</a></li>
-  <li><a href="#raritäten" id="toc-raritäten" class="nav-link" data-scroll-target="#raritäten">Raritäten</a></li>
-  <li><a href="#beobachtungen-mit-rarität-selten" id="toc-beobachtungen-mit-rarität-selten" class="nav-link" data-scroll-target="#beobachtungen-mit-rarität-selten">Beobachtungen mit Rarität “selten”</a></li>
-  <li><a href="#verifizierungs-status" id="toc-verifizierungs-status" class="nav-link" data-scroll-target="#verifizierungs-status">Verifizierungs Status</a></li>
-  <li><a href="#beobachtungen-die-nicht-verizifiert-werden-können" id="toc-beobachtungen-die-nicht-verizifiert-werden-können" class="nav-link" data-scroll-target="#beobachtungen-die-nicht-verizifiert-werden-können">Beobachtungen die nicht verizifiert werden können</a></li>
+  <li><a href="#unique-taxa-mit-research-grade" id="toc-unique-taxa-mit-research-grade" class="nav-link" data-scroll-target="#unique-taxa-mit-research-grade">Unique Taxa mit Research-Grade</a></li>
+  <li><a href="#raritäten-observation.org" id="toc-raritäten-observation.org" class="nav-link" data-scroll-target="#raritäten-observation.org">Raritäten (observation.org)</a></li>
+  <li><a href="#beobachtungen-mit-rarität-selten-observation.org" id="toc-beobachtungen-mit-rarität-selten-observation.org" class="nav-link" data-scroll-target="#beobachtungen-mit-rarität-selten-observation.org">Beobachtungen mit Rarität “selten” (observation.org)</a></li>
+  <li><a href="#beobachtungs-qualität-inaturalist" id="toc-beobachtungs-qualität-inaturalist" class="nav-link" data-scroll-target="#beobachtungs-qualität-inaturalist">Beobachtungs Qualität (iNaturalist)</a></li>
+  <li><a href="#beobachtungen-phylum-inaturalist" id="toc-beobachtungen-phylum-inaturalist" class="nav-link" data-scroll-target="#beobachtungen-phylum-inaturalist">Beobachtungen Phylum (iNaturalist)</a></li>
+  <li><a href="#insecta---ordnungen-inaturalist" id="toc-insecta---ordnungen-inaturalist" class="nav-link" data-scroll-target="#insecta---ordnungen-inaturalist">Insecta - Ordnungen (iNaturalist)</a></li>
+  <li><a href="#beobachtungen-mit-konflikt-bestimmungen-inaturalist" id="toc-beobachtungen-mit-konflikt-bestimmungen-inaturalist" class="nav-link" data-scroll-target="#beobachtungen-mit-konflikt-bestimmungen-inaturalist">Beobachtungen mit Konflikt Bestimmungen (iNaturalist)</a></li>
+  <li><a href="#verifizierung-status-observation.org" id="toc-verifizierung-status-observation.org" class="nav-link" data-scroll-target="#verifizierung-status-observation.org">Verifizierung Status (observation.org)</a></li>
+  <li><a href="#beobachtungen-die-nicht-verizifiert-werden-können-observation.org" id="toc-beobachtungen-die-nicht-verizifiert-werden-können-observation.org" class="nav-link" data-scroll-target="#beobachtungen-die-nicht-verizifiert-werden-können-observation.org">Beobachtungen die nicht Verizifiert werden können (observation.org)</a></li>
   <li><a href="#rote-liste" id="toc-rote-liste" class="nav-link" data-scroll-target="#rote-liste">Rote Liste</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/HannesOberreiter/inat-austria-city-challenge-2025/edit/main/page_salzburg.qmd" class="toc-action"><i class="bi bi-github"></i>Seite editieren</a></li></ul></div></nav>
@@ -215,6 +243,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">City Nature Challenge 2025: Salzburg</h1>
+<p class="subtitle lead">https://observation.org/bioblitz/16314/salzburg-cnc-2025/</p>
 </div>
 
 
@@ -225,7 +254,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Veröffentlichungsdatum</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">2025-04-21T06:09:20+00:00</p>
+      <p class="date">2025-04-21T06:22:04+00:00</p>
     </div>
   </div>
   
@@ -237,136 +266,204 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<ul>
-<li>https://observation.org/bioblitz/16314/salzburg-cnc-2025/</li>
-</ul>
-<p>Insgesamt wurden **** Beobachtungen von <strong>0</strong> Beobachterinnen und Beobachtern hochgeladen. Das ergibt einen Mittelwert von <strong>0</strong> Beobachtungen pro Beobachter bzw. Beobachterin und einen Median von <strong>0</strong>. Auf Spezies-Ebene wurden <strong>0</strong> Beobachtungen hochgeladen.</p>
+<section id="allgemeine-information" class="level2">
+<h2 class="anchored" data-anchor-id="allgemeine-information">Allgemeine Information</h2>
+<p>Insgesamt wurden <strong>58</strong> Beobachtungen von <strong>9</strong> Beobachterinnen und Beobachtern hochgeladen. Das ergibt einen Mittelwert von <strong>6.4</strong> Beobachtungen pro Beobachter bzw. Beobachterin und einen Median von <strong>3</strong>. Auf Spezies-Ebene wurden <strong>43</strong> Beobachtungen hochgeladen.</p>
 <div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Noch keine Beobachtungen"</code></pre>
+<div class="cell-output-display">
+<div id="fig-histo" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-histo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="page_salzburg_files/figure-html/fig-histo-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-histo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Abbildung&nbsp;1: Histogramm der Beobachtungen pro Beobachter/in
+</figcaption>
+</figure>
+</div>
 </div>
 </div>
 <div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Noch keine Beobachtungen"</code></pre>
+<div class="cell-output-display">
+<div id="fig-time" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-time-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="page_salzburg_files/figure-html/fig-time-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-time-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Abbildung&nbsp;2: In welcher Stunde an welchen Wochentag wie viele Beobachtungen gemacht wurden
+</figcaption>
+</figure>
 </div>
 </div>
+</div>
+</section>
 <section id="beobachtungskarte" class="level2">
 <h2 class="anchored" data-anchor-id="beobachtungskarte">Beobachtungskarte</h2>
 <div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Noch keine Beobachtungen"</code></pre>
+<div class="cell-output-display">
+<div class="leaflet html-widget html-fill-item" id="htmlwidget-534536f9d7a7197c79c8" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-534536f9d7a7197c79c8">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"setView":[[47.59397,14.12456],6,[]],"calls":[{"method":"addTiles","args":["https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"https://openstreetmap.org/copyright/\">OpenStreetMap<\/a>,  <a href=\"https://opendatacommons.org/licenses/odbl/\">ODbL<\/a>"}]},{"method":"addCircleMarkers","args":[[47.9758756,47.9758756,47.9695804,47.9695804,47.9695804,47.9758756,47.9758756,47.9695804,47.9758756,47.9695804,47.9923309,47.9758756,47.9758756,47.9695804,47.9695804,47.9758756,47.9758756,47.9758756,47.9695804,47.9923309,47.9695804,47.9695804,47.9758756,47.9758756,47.785222,47.980419,47.7881645248002,47.794186,47.7934666666667,47.8085176,47.756651,47.7316055277778,47.7536925767986,47.3239791672668,47.3239902924803,47.3290450491413,47.785037,47.7855758360317,47.7842224136056,47.784222,47.784222,47.784222,47.784222,47.784222,47.785221653202,47.785222,47.785222,47.785222,47.785222,47.785222,47.7854862067731,47.7842200293527,47.7592724214926,47.8003862,47.3247813725447,47.325785,47.3233522120187,47.3129008538855],[13.0782049,13.0782049,13.1055344,13.1055344,13.1055344,13.0782049,13.0782049,13.1055344,13.0782049,13.1055344,13.1504605,13.0782049,13.0782049,13.1055344,13.1055344,13.0782049,13.0782049,13.0782049,13.1055344,13.1504605,13.1055344,13.1055344,13.0782049,13.0782049,13.041365,13.10579,13.0150544643402,13.008517,13.0085361111111,12.9737086,13.065349,13.0817146111111,13.0692082643509,12.8002400694165,12.8002297570478,12.7373810220141,13.037011,13.0365389585495,13.0320453644345,13.032045,13.032045,13.032045,13.032045,13.032045,13.0413651465824,13.041365,13.041365,13.041365,13.041365,13.041365,13.0365979671478,13.0320686102186,13.0633583664894,12.9719363,12.8026690551942,12.801998,12.8030113041277,12.7959437339978],10,null,"Mo",{"interactive":true,"className":"","stroke":true,"color":"#03F","weight":5,"opacity":0.5,"fill":true,"fillColor":"#03F","fillOpacity":0.2},{"showCoverageOnHover":true,"zoomToBoundsOnClick":true,"spiderfyOnMaxZoom":true,"removeOutsideVisibleBounds":true,"spiderLegPolylineOptions":{"weight":1.5,"color":"#222","opacity":0.5},"freezeAtZoom":false},null,["Michaela Maislinger <br/> Troglodytes troglodytes <br/> 2024-01-01 15:24:00 <br/> <a href='https://observation.org/observation/338844127/'>https://observation.org/observation/338844127/<\/a>","Michaela Maislinger <br/> Aegithalos caudatus <br/> 2024-01-01 15:24:00 <br/> <a href='https://observation.org/observation/338843884/'>https://observation.org/observation/338843884/<\/a>","Michaela Maislinger <br/> Cyanistes caeruleus <br/> 2024-01-01 14:01:00 <br/> <a href='https://observation.org/observation/338843457/'>https://observation.org/observation/338843457/<\/a>","Michaela Maislinger <br/> Corvus corone <br/> 2024-01-01 14:01:00 <br/> <a href='https://observation.org/observation/338843231/'>https://observation.org/observation/338843231/<\/a>","Michaela Maislinger <br/> Dendrocopos major <br/> 2024-01-01 14:01:00 <br/> <a href='https://observation.org/observation/338842822/'>https://observation.org/observation/338842822/<\/a>","Michaela Maislinger <br/> Buteo buteo <br/> 2024-01-01 15:24:00 <br/> <a href='https://observation.org/observation/338842598/'>https://observation.org/observation/338842598/<\/a>","Michaela Maislinger <br/> Ardea cinerea <br/> 2024-01-01 15:24:00 <br/> <a href='https://observation.org/observation/338842379/'>https://observation.org/observation/338842379/<\/a>","Michaela Maislinger <br/> Phalacrocorax carbo <br/> 2024-01-01 14:01:00 <br/> <a href='https://observation.org/observation/338842199/'>https://observation.org/observation/338842199/<\/a>","Michaela Maislinger <br/> Phalacrocorax carbo <br/> 2024-01-01 15:24:00 <br/> <a href='https://observation.org/observation/338842180/'>https://observation.org/observation/338842180/<\/a>","Michaela Maislinger <br/> Podiceps cristatus <br/> 2024-01-01 14:01:00 <br/> <a href='https://observation.org/observation/338842121/'>https://observation.org/observation/338842121/<\/a>","Michaela Maislinger <br/> Podiceps cristatus <br/> 2024-01-01 16:18:00 <br/> <a href='https://observation.org/observation/338842110/'>https://observation.org/observation/338842110/<\/a>","Michaela Maislinger <br/> Podiceps cristatus <br/> 2024-01-01 15:24:00 <br/> <a href='https://observation.org/observation/338842101/'>https://observation.org/observation/338842101/<\/a>","Michaela Maislinger <br/> Gallinula chloropus <br/> 2024-01-01 15:24:00 <br/> <a href='https://observation.org/observation/338841662/'>https://observation.org/observation/338841662/<\/a>","Michaela Maislinger <br/> Melanitta fusca <br/> 2024-01-01 14:01:00 <br/> <a href='https://observation.org/observation/338841252/'>https://observation.org/observation/338841252/<\/a>","Michaela Maislinger <br/> Anas platyrhynchos <br/> 2024-01-01 14:01:00 <br/> <a href='https://observation.org/observation/338841148/'>https://observation.org/observation/338841148/<\/a>","Michaela Maislinger <br/> Anas platyrhynchos <br/> 2024-01-01 15:24:00 <br/> <a href='https://observation.org/observation/338841114/'>https://observation.org/observation/338841114/<\/a>","Michaela Maislinger <br/> Cygnus olor <br/> 2024-01-01 15:24:00 <br/> <a href='https://observation.org/observation/338840939/'>https://observation.org/observation/338840939/<\/a>","Michaela Maislinger <br/> Fulica atra <br/> 2024-01-01 15:24:00 <br/> <a href='https://observation.org/observation/338841737/'>https://observation.org/observation/338841737/<\/a>","Michaela Maislinger <br/> Bucephala clangula <br/> 2024-01-01 14:01:00 <br/> <a href='https://observation.org/observation/338841268/'>https://observation.org/observation/338841268/<\/a>","Michaela Maislinger <br/> Bucephala clangula <br/> 2024-01-01 16:18:00 <br/> <a href='https://observation.org/observation/338841267/'>https://observation.org/observation/338841267/<\/a>","Michaela Maislinger <br/> Aythya fuligula <br/> 2024-01-01 14:01:00 <br/> <a href='https://observation.org/observation/338841247/'>https://observation.org/observation/338841247/<\/a>","Michaela Maislinger <br/> Netta rufina <br/> 2024-01-01 14:01:00 <br/> <a href='https://observation.org/observation/338841185/'>https://observation.org/observation/338841185/<\/a>","Michaela Maislinger <br/> Anas crecca <br/> 2024-01-01 15:24:00 <br/> <a href='https://observation.org/observation/338841164/'>https://observation.org/observation/338841164/<\/a>","Michaela Maislinger <br/> Mareca strepera <br/> 2024-01-01 15:24:00 <br/> <a href='https://observation.org/observation/338841007/'>https://observation.org/observation/338841007/<\/a>","Hildegard Löcker <br/> Sitta europaea <br/> 2024-01-01 12:02:00 <br/> <a href='https://observation.org/observation/295499537/'>https://observation.org/observation/295499537/<\/a>","Michaela Maislinger <br/> Melanitta fusca <br/> 2024-01-01 13:41:00 <br/> <a href='https://observation.org/observation/295480012/'>https://observation.org/observation/295480012/<\/a>","Stefan Kwitt <br/> Lamiastrum galeobdolon subsp. argentatum <br/> 2024-01-01 14:46:00 <br/> <a href='https://observation.org/observation/295472312/'>https://observation.org/observation/295472312/<\/a>","Stefan Kwitt <br/> Achillea millefolium <br/> 2024-01-01 14:28:00 <br/> <a href='https://observation.org/observation/295472492/'>https://observation.org/observation/295472492/<\/a>","Stefan Kwitt <br/> Vicia sepium <br/> 2024-01-01 14:29:00 <br/> <a href='https://observation.org/observation/295472370/'>https://observation.org/observation/295472370/<\/a>","Belinda Stockinger <br/> Lycoperdon pyriforme <br/> 2024-01-01 15:30:00 <br/> <a href='https://observation.org/observation/295461067/'>https://observation.org/observation/295461067/<\/a>","Christine Medicus <br/> Gyps fulvus <br/> 2024-01-01 12:26:00 <br/> <a href='https://observation.org/observation/295484660/'>https://observation.org/observation/295484660/<\/a>","Sigrun B. <br/> Anas platyrhynchos var. domestica <br/> 2024-01-01 14:43:00 <br/> <a href='https://observation.org/observation/295485630/'>https://observation.org/observation/295485630/<\/a>","Christine Medicus <br/> Ciconia ciconia <br/> 2024-01-01 13:02:00 <br/> <a href='https://observation.org/observation/295485666/'>https://observation.org/observation/295485666/<\/a>","Stefan Brugmans (UitVogelenMetStefan) <br/> Passer montanus <br/> 2024-01-01 16:08:00 <br/> <a href='https://observation.org/observation/295564877/'>https://observation.org/observation/295564877/<\/a>","Stefan Brugmans (UitVogelenMetStefan) <br/> Turdus merula <br/> 2024-01-01 16:08:00 <br/> <a href='https://observation.org/observation/295564875/'>https://observation.org/observation/295564875/<\/a>","Stefan Brugmans (UitVogelenMetStefan) <br/> Corvus corax <br/> 2024-01-01 13:16:00 <br/> <a href='https://observation.org/observation/295564874/'>https://observation.org/observation/295564874/<\/a>","Cornelia Fritz <br/> Metzgeria furcata <br/> 2024-01-01 14:59:00 <br/> <a href='https://observation.org/observation/295499198/'>https://observation.org/observation/295499198/<\/a>","Cornelia Fritz <br/> Calocera viscosa <br/> 2024-01-01 15:11:00 <br/> <a href='https://observation.org/observation/295501059/'>https://observation.org/observation/295501059/<\/a>","Hildegard Löcker <br/> Garrulus glandarius <br/> 2024-01-01 15:50:00 <br/> <a href='https://observation.org/observation/295499143/'>https://observation.org/observation/295499143/<\/a>","Hildegard Löcker <br/> Parus major <br/> 2024-01-01 15:46:00 <br/> <a href='https://observation.org/observation/295499184/'>https://observation.org/observation/295499184/<\/a>","Hildegard Löcker <br/> Cyanistes caeruleus <br/> 2024-01-01 15:06:00 <br/> <a href='https://observation.org/observation/295499215/'>https://observation.org/observation/295499215/<\/a>","Hildegard Löcker <br/> Erithacus rubecula <br/> 2024-01-01 15:05:00 <br/> <a href='https://observation.org/observation/295499277/'>https://observation.org/observation/295499277/<\/a>","Hildegard Löcker <br/> Lophophanes cristatus <br/> 2024-01-01 14:45:00 <br/> <a href='https://observation.org/observation/295499312/'>https://observation.org/observation/295499312/<\/a>","Hildegard Löcker <br/> Streptopelia decaocto <br/> 2024-01-01 13:15:00 <br/> <a href='https://observation.org/observation/295499346/'>https://observation.org/observation/295499346/<\/a>","Hildegard Löcker <br/> Turdus viscivorus <br/> 2024-01-01 12:48:00 <br/> <a href='https://observation.org/observation/295499375/'>https://observation.org/observation/295499375/<\/a>","Hildegard Löcker <br/> Chloris chloris <br/> 2024-01-01 12:47:00 <br/> <a href='https://observation.org/observation/295499382/'>https://observation.org/observation/295499382/<\/a>","Hildegard Löcker <br/> Corvus corone <br/> 2024-01-01 12:30:00 <br/> <a href='https://observation.org/observation/295499419/'>https://observation.org/observation/295499419/<\/a>","Hildegard Löcker <br/> Chroicocephalus ridibundus <br/> 2024-01-01 12:24:00 <br/> <a href='https://observation.org/observation/295499440/'>https://observation.org/observation/295499440/<\/a>","Hildegard Löcker <br/> Corvus corone <br/> 2024-01-01 12:15:00 <br/> <a href='https://observation.org/observation/295499456/'>https://observation.org/observation/295499456/<\/a>","Hildegard Löcker <br/> Corvus corone <br/> 2024-01-01 12:00:00 <br/> <a href='https://observation.org/observation/295499559/'>https://observation.org/observation/295499559/<\/a>","Cornelia Fritz <br/> Osmoporus odoratus <br/> 2024-01-01 15:06:00 <br/> <a href='https://observation.org/observation/295499648/'>https://observation.org/observation/295499648/<\/a>","Hildegard Löcker <br/> Turdus merula <br/> 2024-01-01 09:25:00 <br/> <a href='https://observation.org/observation/295499579/'>https://observation.org/observation/295499579/<\/a>","Christine Medicus <br/> Tichodroma muraria <br/> 2024-01-01 12:00:00 <br/> <a href='https://observation.org/observation/295483956/'>https://observation.org/observation/295483956/<\/a>","Belinda Stockinger <br/> Xanthoria parietina <br/> 2024-01-01 15:04:00 <br/> <a href='https://observation.org/observation/295457486/'>https://observation.org/observation/295457486/<\/a>","Cornelis van Seventer <br/> Podiceps cristatus <br/> 2024-01-01 09:50:00 <br/> <a href='https://observation.org/observation/295426451/'>https://observation.org/observation/295426451/<\/a>","Cornelis van Seventer <br/> Anas platyrhynchos <br/> 2024-01-01 09:50:00 <br/> <a href='https://observation.org/observation/295426290/'>https://observation.org/observation/295426290/<\/a>","Cornelis van Seventer <br/> Mergus merganser <br/> 2024-01-01 09:50:00 <br/> <a href='https://observation.org/observation/295426227/'>https://observation.org/observation/295426227/<\/a>","Cornelis van Seventer <br/> Cygnus olor <br/> 2024-01-01 09:50:00 <br/> <a href='https://observation.org/observation/295426002/'>https://observation.org/observation/295426002/<\/a>"],null,["Troglodytes troglodytes","Aegithalos caudatus","Cyanistes caeruleus","Corvus corone","Dendrocopos major","Buteo buteo","Ardea cinerea","Phalacrocorax carbo","Phalacrocorax carbo","Podiceps cristatus","Podiceps cristatus","Podiceps cristatus","Gallinula chloropus","Melanitta fusca","Anas platyrhynchos","Anas platyrhynchos","Cygnus olor","Fulica atra","Bucephala clangula","Bucephala clangula","Aythya fuligula","Netta rufina","Anas crecca","Mareca strepera","Sitta europaea","Melanitta fusca","Lamiastrum galeobdolon subsp. argentatum","Achillea millefolium","Vicia sepium","Lycoperdon pyriforme","Gyps fulvus","Anas platyrhynchos var. domestica","Ciconia ciconia","Passer montanus","Turdus merula","Corvus corax","Metzgeria furcata","Calocera viscosa","Garrulus glandarius","Parus major","Cyanistes caeruleus","Erithacus rubecula","Lophophanes cristatus","Streptopelia decaocto","Turdus viscivorus","Chloris chloris","Corvus corone","Chroicocephalus ridibundus","Corvus corone","Corvus corone","Osmoporus odoratus","Turdus merula","Tichodroma muraria","Xanthoria parietina","Podiceps cristatus","Anas platyrhynchos","Mergus merganser","Cygnus olor"],{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addLayersControl","args":[[],["Mo","Di","Mi","Do","Fr","Sa","So"],{"collapsed":false,"autoZIndex":true,"position":"topright"}]}],"limits":{"lat":[47.3129008538855,47.9923309],"lng":[12.7373810220141,13.1504605]}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
 <section id="fun-facts" class="level2">
 <h2 class="anchored" data-anchor-id="fun-facts">Fun Facts</h2>
-<p>Besonders liebt der User bzw. die Userin <strong>0</strong> die Art <em>0</em>, die er/sie bereits 0 Mal hochgeladen hat. Das Taxon mit dem längsten Namen ist <strong><em>0</em></strong>, das 0 Zeichen lang ist.</p>
+<p>User (auch bekannt als Birder) <strong>0</strong> hat 0 Vogelbeobachtungen hochgeladen - mehr als jede/r andere. Besonders liebt der User bzw. die Userin <strong>Michaela Maislinger</strong> die Art <em>Podiceps cristatus</em>, die er/sie bereits 3 Mal hochgeladen hat. Das Taxon mit dem längsten Namen ist <strong><em>Lamiastrum galeobdolon subsp. argentatum</em></strong>, das 40 Zeichen lang ist.</p>
 </section>
 <section id="top-beobachterinnen" class="level2">
 <h2 class="anchored" data-anchor-id="top-beobachterinnen">Top Beobachter/innen</h2>
 <p>In dieser Liste werden auch doppelte Beobachtungen gezählt, jedoch sollte dies nicht als Tipp betrachtet werden, um an erster Stelle zu stehen.</p>
+<div class="cell">
 <div id="tbl-topObserver" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-topObserver-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Tabelle&nbsp;1: Beobachter/innen und deren Uploads geordnet nach Anzahl der Beobachtungen.
 </figcaption>
 <div aria-describedby="tbl-topObserver-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Noch keine Beobachtungen"</code></pre>
+<div class="cell-output-display">
+<div class="datatables html-widget html-fill-item" id="htmlwidget-2708c71ec0ef86f73b6c" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-2708c71ec0ef86f73b6c">{"x":{"filter":"none","vertical":false,"data":[[25,14,4,3,3,3,3,2,1],["Michaela Maislinger","Hildegard Löcker","Cornelis van Seventer","Christine Medicus","Stefan Kwitt","Stefan Brugmans (UitVogelenMetStefan)","Cornelia Fritz","Belinda Stockinger","Sigrun B."]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>Beob. [#]<\/th>\n      <th>User<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":0},{"name":"Beob. [#]","targets":0},{"name":"User","targets":1}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </figure>
 </div>
+</div>
+</section>
+<section id="top-bestimmerinnen-inaturalist" class="level2">
+<h2 class="anchored" data-anchor-id="top-bestimmerinnen-inaturalist">Top Bestimmer/Innen (iNaturalist)</h2>
+<p>Die erhobenen Beobachtungen werden erst durch die unerschöpfliche Arbeit der Bestimmer/innen zu wertvollen Daten. An dieser Stelle ein großes Dankeschön an alle Bestimmer/innen ohne euch wäre iNaturalist nicht das, was es heute ist.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Noch keine Beobachtungen"</code></pre>
+</div>
+</div>
 </section>
 <section id="top-beobachterinnen-mit-den-meisten-unterschiedlichen-arten" class="level2">
 <h2 class="anchored" data-anchor-id="top-beobachterinnen-mit-den-meisten-unterschiedlichen-arten">Top Beobachter/innen mit den meisten unterschiedlichen Arten</h2>
-<p>Nur Beobachtungen zumindest auf Spezies-Ebene und nur Arten mit einem positiven Validiterungs Status.</p>
+<p>Nur Beobachtungen zumindest auf Spezies-Ebene und Research-Grade oder positiven Validierung Status werden gezählt.</p>
+<div class="cell">
 <div id="tbl-topObserverSpecies" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-topObserverSpecies-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Tabelle&nbsp;2: Liste der Beobachter/Innen und Anzahl der unterschiedlichen Arten.
 </figcaption>
 <div aria-describedby="tbl-topObserverSpecies-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Noch keine Beobachtungen"</code></pre>
+<div class="cell-output-display">
+<div class="datatables html-widget html-fill-item" id="htmlwidget-90b2be12f9bc4fdeefca" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-90b2be12f9bc4fdeefca">{"x":{"filter":"none","vertical":false,"data":[[13,12,4,3,3,3,1,1],["Michaela Maislinger","Hildegard Löcker","Cornelis van Seventer","Christine Medicus","Stefan Kwitt","Stefan Brugmans (UitVogelenMetStefan)","Belinda Stockinger","Cornelia Fritz"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>Uniques [#]<\/th>\n      <th>User<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":0},{"name":"Uniques [#]","targets":0},{"name":"User","targets":1}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </figure>
 </div>
+</div>
 </section>
 <section id="top-taxa-spezies-ebene" class="level2">
 <h2 class="anchored" data-anchor-id="top-taxa-spezies-ebene">Top Taxa (Spezies-Ebene)</h2>
-<p>In dieser Liste sind die am häufigsten beobachteten Taxa auf Spezies-Ebene aufgeführt, die bereits verifiziert wurden.</p>
+<p>In dieser Liste sind die am häufigsten beobachteten Taxa auf Spezies-Ebene aufgeführt, die bereits identifiziert wurden.</p>
+<div class="cell">
 <div id="tbl-topTaxa" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-topTaxa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Tabelle&nbsp;3: Taxa mit Research-Grade auf Spezies-Ebene geordnet nach Anzahl der Beobachtungen.
 </figcaption>
 <div aria-describedby="tbl-topTaxa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Noch keine Beobachtungen"</code></pre>
+<div class="cell-output-display">
+<div class="datatables html-widget html-fill-item" id="htmlwidget-bdc208aa87288c375a51" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-bdc208aa87288c375a51">{"x":{"filter":"none","vertical":false,"data":[[4,4,3,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],["Corvus corone","Podiceps cristatus","Anas platyrhynchos","Cyanistes caeruleus","Cygnus olor","Melanitta fusca","Phalacrocorax carbo","Turdus merula","Achillea millefolium","Aegithalos caudatus","Ardea cinerea","Buteo buteo","Calocera viscosa","Chloris chloris","Chroicocephalus ridibundus","Ciconia ciconia","Corvus corax","Dendrocopos major","Erithacus rubecula","Gallinula chloropus","Garrulus glandarius","Gyps fulvus","Lamiastrum galeobdolon subsp. argentatum","Lophophanes cristatus","Lycoperdon pyriforme","Mergus merganser","Parus major","Passer montanus","Sitta europaea","Streptopelia decaocto","Tichodroma muraria","Troglodytes troglodytes","Turdus viscivorus","Vicia sepium"],["Rabenkrähe","Haubentaucher","Stockente","Blaumeise","Höckerschwan","Samtente","Kormoran","Amsel","Gewöhnliche Schafgarbe","Schwanzmeise","Graureiher","Mäusebussard","Klebriger Hörnling","Grünfink","Lachmöwe","Weißstorch","Kolkrabe","Buntspecht","Rotkehlchen","Teichhuhn","Eichelhäher","Gänsegeier","Silberblättrige Taubnessel","Haubenmeise","Birnen-Stäubling","Gänsesäger","Kohlmeise","Feldsperling","Kleiber","Türkentaube","Mauerläufer","Zaunkönig","Misteldrossel","Zaun-Wicke"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>Beob. [#]<\/th>\n      <th>Wiss. Name<\/th>\n      <th>Umgangspr. Name<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":0},{"name":"Beob. [#]","targets":0},{"name":"Wiss. Name","targets":1},{"name":"Umgangspr. Name","targets":2}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </figure>
 </div>
+</div>
 </section>
-<section id="unique-verifizierte-taxa" class="level2">
-<h2 class="anchored" data-anchor-id="unique-verifizierte-taxa">Unique Verifizierte Taxa</h2>
+<section id="unique-taxa-mit-research-grade" class="level2">
+<h2 class="anchored" data-anchor-id="unique-taxa-mit-research-grade">Unique Taxa mit Research-Grade</h2>
 <p>Besonders erfreulich sind natürlich immer einzigartige Funde, die nur von einer Person in der Challenge hochgeladen wurden.</p>
+<div class="cell">
 <div id="tbl-uniqueTaxa" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-uniqueTaxa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Tabelle&nbsp;4: Einmalige verfizierte Taxa mit auf Spezies-Ebene inklusive Angabe des Users.
+Tabelle&nbsp;4: Einmalige Taxa mit Research-Grade auf Spezies-Ebene inklusive Angabe des Users.
 </figcaption>
 <div aria-describedby="tbl-uniqueTaxa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Noch keine Beobachtungen"</code></pre>
+<div class="cell-output-display">
+<div class="datatables html-widget html-fill-item" id="htmlwidget-97d7734448b9d7d25a3f" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-97d7734448b9d7d25a3f">{"x":{"filter":"none","vertical":false,"data":[["Troglodytes troglodytes","Aegithalos caudatus","Dendrocopos major","Buteo buteo","Ardea cinerea","Gallinula chloropus","Sitta europaea","Lamiastrum galeobdolon subsp. argentatum","Achillea millefolium","Vicia sepium","Lycoperdon pyriforme","Gyps fulvus","Ciconia ciconia","Passer montanus","Corvus corax","Calocera viscosa","Garrulus glandarius","Parus major","Erithacus rubecula","Lophophanes cristatus","Streptopelia decaocto","Turdus viscivorus","Chloris chloris","Chroicocephalus ridibundus","Tichodroma muraria","Mergus merganser"],["Zaunkönig","Schwanzmeise","Buntspecht","Mäusebussard","Graureiher","Teichhuhn","Kleiber","Silberblättrige Taubnessel","Gewöhnliche Schafgarbe","Zaun-Wicke","Birnen-Stäubling","Gänsegeier","Weißstorch","Feldsperling","Kolkrabe","Klebriger Hörnling","Eichelhäher","Kohlmeise","Rotkehlchen","Haubenmeise","Türkentaube","Misteldrossel","Grünfink","Lachmöwe","Mauerläufer","Gänsesäger"],["Michaela Maislinger","Michaela Maislinger","Michaela Maislinger","Michaela Maislinger","Michaela Maislinger","Michaela Maislinger","Hildegard Löcker","Stefan Kwitt","Stefan Kwitt","Stefan Kwitt","Belinda Stockinger","Christine Medicus","Christine Medicus","Stefan Brugmans (UitVogelenMetStefan)","Stefan Brugmans (UitVogelenMetStefan)","Cornelia Fritz","Hildegard Löcker","Hildegard Löcker","Hildegard Löcker","Hildegard Löcker","Hildegard Löcker","Hildegard Löcker","Hildegard Löcker","Hildegard Löcker","Christine Medicus","Cornelis van Seventer"],["<a href='https://observation.org/observation/338844127/'>https://observation.org/observation/338844127/<\/a>","<a href='https://observation.org/observation/338843884/'>https://observation.org/observation/338843884/<\/a>","<a href='https://observation.org/observation/338842822/'>https://observation.org/observation/338842822/<\/a>","<a href='https://observation.org/observation/338842598/'>https://observation.org/observation/338842598/<\/a>","<a href='https://observation.org/observation/338842379/'>https://observation.org/observation/338842379/<\/a>","<a href='https://observation.org/observation/338841662/'>https://observation.org/observation/338841662/<\/a>","<a href='https://observation.org/observation/295499537/'>https://observation.org/observation/295499537/<\/a>","<a href='https://observation.org/observation/295472312/'>https://observation.org/observation/295472312/<\/a>","<a href='https://observation.org/observation/295472492/'>https://observation.org/observation/295472492/<\/a>","<a href='https://observation.org/observation/295472370/'>https://observation.org/observation/295472370/<\/a>","<a href='https://observation.org/observation/295461067/'>https://observation.org/observation/295461067/<\/a>","<a href='https://observation.org/observation/295484660/'>https://observation.org/observation/295484660/<\/a>","<a href='https://observation.org/observation/295485666/'>https://observation.org/observation/295485666/<\/a>","<a href='https://observation.org/observation/295564877/'>https://observation.org/observation/295564877/<\/a>","<a href='https://observation.org/observation/295564874/'>https://observation.org/observation/295564874/<\/a>","<a href='https://observation.org/observation/295501059/'>https://observation.org/observation/295501059/<\/a>","<a href='https://observation.org/observation/295499143/'>https://observation.org/observation/295499143/<\/a>","<a href='https://observation.org/observation/295499184/'>https://observation.org/observation/295499184/<\/a>","<a href='https://observation.org/observation/295499277/'>https://observation.org/observation/295499277/<\/a>","<a href='https://observation.org/observation/295499312/'>https://observation.org/observation/295499312/<\/a>","<a href='https://observation.org/observation/295499346/'>https://observation.org/observation/295499346/<\/a>","<a href='https://observation.org/observation/295499375/'>https://observation.org/observation/295499375/<\/a>","<a href='https://observation.org/observation/295499382/'>https://observation.org/observation/295499382/<\/a>","<a href='https://observation.org/observation/295499440/'>https://observation.org/observation/295499440/<\/a>","<a href='https://observation.org/observation/295483956/'>https://observation.org/observation/295483956/<\/a>","<a href='https://observation.org/observation/295426227/'>https://observation.org/observation/295426227/<\/a>"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>Wiss. Name<\/th>\n      <th>Umgangspr. Name<\/th>\n      <th>User<\/th>\n      <th>Link<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"type":"html","targets":3},{"name":"Wiss. Name","targets":0},{"name":"Umgangspr. Name","targets":1},{"name":"User","targets":2},{"name":"Link","targets":3}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </figure>
 </div>
+</div>
 </section>
-<section id="raritäten" class="level2">
-<h2 class="anchored" data-anchor-id="raritäten">Raritäten</h2>
-<p>Observation.org hat eine eigene Einteilung in Seltenheiten.</p>
+<section id="raritäten-observation.org" class="level2">
+<h2 class="anchored" data-anchor-id="raritäten-observation.org">Raritäten (observation.org)</h2>
+<p>Observation.org hat eine eigene Einteilung in Seltenheiten, die sich von der iNaturalist-Einteilung unterscheidet. Die Einteilung ist wie folgt:</p>
 <div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Noch keine Beobachtungen"</code></pre>
+<div class="cell-output-display">
+<div id="fig-QualityRarity" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-QualityRarity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="page_salzburg_files/figure-html/fig-QualityRarity-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-QualityRarity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Abbildung&nbsp;3: Verteilung des Raritäten Level auf observation.org
+</figcaption>
+</figure>
+</div>
 </div>
 </div>
 </section>
-<section id="beobachtungen-mit-rarität-selten" class="level2">
-<h2 class="anchored" data-anchor-id="beobachtungen-mit-rarität-selten">Beobachtungen mit Rarität “selten”</h2>
+<section id="beobachtungen-mit-rarität-selten-observation.org" class="level2">
+<h2 class="anchored" data-anchor-id="beobachtungen-mit-rarität-selten-observation.org">Beobachtungen mit Rarität “selten” (observation.org)</h2>
+<p>Die Beobachtungen mit Rarität “selten” sind in der Liste unten aufgeführt.</p>
+<div class="cell">
 <div id="tbl-rarityTaxa" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-rarityTaxa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Tabelle&nbsp;5: Beobachtungen die laut observation.org selten sind.
 </figcaption>
 <div aria-describedby="tbl-rarityTaxa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Noch keine Beobachtungen"</code></pre>
+<div class="cell-output-display">
+<div class="datatables html-widget html-fill-item" id="htmlwidget-48a66e750189652501dc" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-48a66e750189652501dc">{"x":{"filter":"none","vertical":false,"data":[["Gyps fulvus"],["Gänsegeier"],["Christine Medicus"],["<a href='https://observation.org/observation/295484660/'>https://observation.org/observation/295484660/<\/a>"],["selten"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>Wiss. Name<\/th>\n      <th>Umgangspr. Name<\/th>\n      <th>User<\/th>\n      <th>Link<\/th>\n      <th>Level<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"type":"html","targets":3},{"name":"Wiss. Name","targets":0},{"name":"Umgangspr. Name","targets":1},{"name":"User","targets":2},{"name":"Link","targets":3},{"name":"Level","targets":4}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </figure>
 </div>
+</div>
 </section>
-<section id="verifizierungs-status" class="level2">
-<h2 class="anchored" data-anchor-id="verifizierungs-status">Verifizierungs Status</h2>
-<p>Observation.org unterteilt die Beobachtungen in unterschiedliche Verifikationen.</p>
+<section id="beobachtungs-qualität-inaturalist" class="level2">
+<h2 class="anchored" data-anchor-id="beobachtungs-qualität-inaturalist">Beobachtungs Qualität (iNaturalist)</h2>
+<p>iNaturalist unterteilt die Beobachtungsqualität in drei Kategorien. Die Kategorie “causal” umfasst Beobachtungen, bei denen mindestens eines der folgenden Elemente fehlt: das Datum der Beobachtung, der Beobachtungsort oder ein Foto (oder Tonaufnahme). Die Kategorie “needs_id” wird angezeigt, bis mindestens zwei Personen eine Spezies für diesen Upload einstimmig bestimmt haben, ohne Widerspruch. Die letzte und wertvollste Kategorie ist “research”, die bestätigte Beobachtungen auf Spezies-Ebene umfasst.</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Noch keine Beobachtungen"</code></pre>
 </div>
 </div>
 </section>
-<section id="beobachtungen-die-nicht-verizifiert-werden-können" class="level2">
-<h2 class="anchored" data-anchor-id="beobachtungen-die-nicht-verizifiert-werden-können">Beobachtungen die nicht verizifiert werden können</h2>
-<p>Hier werden alle Beobachtungen angezeigt die nicht verizifiert werden können oder nicht genehmigt wurden.</p>
+<section id="beobachtungen-phylum-inaturalist" class="level2">
+<h2 class="anchored" data-anchor-id="beobachtungen-phylum-inaturalist">Beobachtungen Phylum (iNaturalist)</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Noch keine Beobachtungen"</code></pre>
+</div>
+</div>
+</section>
+<section id="insecta---ordnungen-inaturalist" class="level2">
+<h2 class="anchored" data-anchor-id="insecta---ordnungen-inaturalist">Insecta - Ordnungen (iNaturalist)</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Noch keine Beobachtungen"</code></pre>
+</div>
+</div>
+</section>
+<section id="beobachtungen-mit-konflikt-bestimmungen-inaturalist" class="level2">
+<h2 class="anchored" data-anchor-id="beobachtungen-mit-konflikt-bestimmungen-inaturalist">Beobachtungen mit Konflikt Bestimmungen (iNaturalist)</h2>
 <div id="tbl-Conflict" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-Conflict-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Tabelle&nbsp;6: Unverfizierte Beobachtungen
+Tabelle&nbsp;6: Beobachtungen wo User unterschiedlicher Meinung zum beobachteten Taxon sind.
 </figcaption>
 <div aria-describedby="tbl-Conflict-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-stdout">
@@ -376,32 +473,74 @@ Tabelle&nbsp;6: Unverfizierte Beobachtungen
 </figure>
 </div>
 </section>
+<section id="verifizierung-status-observation.org" class="level2">
+<h2 class="anchored" data-anchor-id="verifizierung-status-observation.org">Verifizierung Status (observation.org)</h2>
+<p>Observation.org unterteilt die Beobachtungen in unterschiedliche Validierung Status.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-verification" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-verification-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="page_salzburg_files/figure-html/fig-verification-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-verification-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Abbildung&nbsp;4: Verteilung des Validierung auf observation.org
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="beobachtungen-die-nicht-verizifiert-werden-können-observation.org" class="level2">
+<h2 class="anchored" data-anchor-id="beobachtungen-die-nicht-verizifiert-werden-können-observation.org">Beobachtungen die nicht Verizifiert werden können (observation.org)</h2>
+<p>Hier werden alle Beobachtungen angezeigt die nicht Verizifiert werden können oder nicht genehmigt wurden, auf observation.org.</p>
+<div class="cell">
+<div id="tbl-unverified" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-unverified-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabelle&nbsp;7: Unverfizierte Beobachtungen
+</figcaption>
+<div aria-describedby="tbl-unverified-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<div class="datatables html-widget html-fill-item" id="htmlwidget-9045c1dc203dc958ed0d" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-9045c1dc203dc958ed0d">{"x":{"filter":"none","vertical":false,"data":[[],[],[]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>Link<\/th>\n      <th>User<\/th>\n      <th>Taxa<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"type":"html","targets":1},{"name":"Link","targets":0},{"name":"User","targets":1},{"name":"Taxa","targets":2}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</figure>
+</div>
+</div>
+</section>
 <section id="rote-liste" class="level2">
 <h2 class="anchored" data-anchor-id="rote-liste">Rote Liste</h2>
-<p><em>Anmerkung: Keine Ahnung wie aktuell meine Rote Liste ist.</em></p>
+<div class="cell">
 <div id="tbl-CheckList" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-CheckList-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Tabelle&nbsp;7: Beobachtungen die zumindest in einem EU Land auf der Roten Liste stehen inklusive Anzahl der Beobachtungen.
+Tabelle&nbsp;8: Beobachtungen die zumindest in einem EU Land auf der Roten Liste stehen inklusive Anzahl der Beobachtungen.
 </figcaption>
 <div aria-describedby="tbl-CheckList-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Noch keine Beobachtungen"</code></pre>
+<div class="cell-output-display">
+<div class="datatables html-widget html-fill-item" id="htmlwidget-753de69a93a4ea797b23" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-753de69a93a4ea797b23">{"x":{"filter":"none","vertical":false,"data":[[],[],[],[],[],[]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>Wiss. Name<\/th>\n      <th>Umgangspr. Name<\/th>\n      <th>annex_II_priority<\/th>\n      <th>annex_II<\/th>\n      <th>annex_IV<\/th>\n      <th>Beob. (#)<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":5},{"name":"Wiss. Name","targets":0},{"name":"Umgangspr. Name","targets":1},{"name":"annex_II_priority","targets":2},{"name":"annex_II","targets":3},{"name":"annex_IV","targets":4},{"name":"Beob. (#)","targets":5}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </figure>
 </div>
+</div>
+<div class="cell">
 <div id="tbl-BirdsList" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-BirdsList-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Tabelle&nbsp;8: Vogel Beobachtungen die zumindest in einem EU Land auf der Roten Liste AnnexI stehen inklusive Anzahl der Beobachtungen.
+Tabelle&nbsp;9: Vogel Beobachtungen die zumindest in einem EU Land auf der Roten Liste AnnexI stehen inklusive Anzahl der Beobachtungen.
 </figcaption>
 <div aria-describedby="tbl-BirdsList-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Noch keine Beobachtungen"</code></pre>
+<div class="cell-output-display">
+<div class="datatables html-widget html-fill-item" id="htmlwidget-f39a9b93c09164af4e5b" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-f39a9b93c09164af4e5b">{"x":{"filter":"none","vertical":false,"data":[["Aegithalos caudatus","Anas crecca","Anas platyrhynchos","Ardea cinerea","Aythya fuligula","Bucephala clangula","Buteo buteo","Chloris chloris","Ciconia ciconia","Corvus corax","Corvus corone","Cyanistes caeruleus","Cygnus olor","Dendrocopos major","Erithacus rubecula","Fulica atra","Gallinula chloropus","Garrulus glandarius","Gyps fulvus","Lophophanes cristatus","Mareca strepera","Melanitta fusca","Mergus merganser","Netta rufina","Parus major","Passer montanus","Phalacrocorax carbo","Podiceps cristatus","Sitta europaea","Streptopelia decaocto","Tichodroma muraria","Troglodytes troglodytes","Turdus merula","Turdus viscivorus"],["Schwanzmeise","Krickente","Stockente","Graureiher","Reiherente","Schellente","Mäusebussard","Grünfink","Weißstorch","Kolkrabe","Rabenkrähe","Blaumeise","Höckerschwan","Buntspecht","Rotkehlchen","Blässhuhn","Teichhuhn","Eichelhäher","Gänsegeier","Haubenmeise","Schnatterente","Samtente","Gänsesäger","Kolbenente","Kohlmeise","Feldsperling","Kormoran","Haubentaucher","Kleiber","Türkentaube","Mauerläufer","Zaunkönig","Amsel","Misteldrossel"],["","","","","","","","","I","","","","","I *","","","","","I","","","","","","","","","","","","","I *","",""],[1,1,3,1,1,2,1,1,1,1,4,2,2,1,1,1,1,1,1,1,1,2,1,1,1,1,2,4,1,1,1,1,2,1]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>Wiss. Name<\/th>\n      <th>Umgangspr. Name<\/th>\n      <th>AnnexI<\/th>\n      <th>Beob. (#)<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":3},{"name":"Wiss. Name","targets":0},{"name":"Umgangspr. Name","targets":1},{"name":"AnnexI","targets":2},{"name":"Beob. (#)","targets":3}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </figure>
+</div>
 </div>
 
 
