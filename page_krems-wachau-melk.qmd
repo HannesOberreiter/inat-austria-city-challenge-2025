@@ -1,5 +1,6 @@
 ---
 title: "City Nature Challenge 2025: Krems - Wachau - Melk"
+subtitle: https://www.inaturalist.org/projects/city-nature-challenge-2025-krems-wachau-melk
 lang: 'de-AT'
 execute:
   warning: false
@@ -10,15 +11,13 @@ date: last-modified
 date-format: "YYYY-MM-DDTHH:mm:ssZ"
 ---
 
-- https://www.inaturalist.org/projects/city-nature-challenge-2025-krems-wachau-melk
-
 {{< include _init.qmd >}}
 
 ```{r init}
 #| include: false
 #| cache: false
 projectIds <- c("Krems" = "220961")
-obsResults <- loadObs(projectIds)
+resultsDf <- loadINat(projectIds)
 ```
 
 {{< include _body.qmd >}}

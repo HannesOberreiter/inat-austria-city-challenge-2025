@@ -1,5 +1,6 @@
 ---
 title: "City Nature Challenge 2025: Wien"
+subtitle: https://www.inaturalist.org/projects/city-nature-challenge-2025-wien
 lang: 'de-AT'
 execute:
   warning: false
@@ -10,15 +11,13 @@ date: last-modified
 date-format: "YYYY-MM-DDTHH:mm:ssZ"
 ---
 
-- https://www.inaturalist.org/projects/city-nature-challenge-2025-wien
-
 {{< include _init.qmd >}}
 
 ```{r init}
 #| include: false
 #! cache: false
 projectId <- c("Wien" = "224108")
-obsResults <- loadObs(projectId)
+resultsDf <- loadINat(projectId)
 ```
 
 {{< include _body.qmd >}}

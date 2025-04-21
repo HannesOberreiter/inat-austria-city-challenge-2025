@@ -1,0 +1,236 @@
+{
+  "validation_status": [
+    {
+      "id": "O",
+      "name": "unbekannt",
+      "is_active": true
+    },
+    {
+      "id": "J",
+      "name": "genehmigt (aufgrund Beleg)",
+      "is_active": true
+    },
+    {
+      "id": "P",
+      "name": "genehmigt (plausibel)",
+      "is_active": true
+    },
+    {
+      "id": "A",
+      "name": "genehmigt (automatische Validierung)",
+      "is_active": true
+    },
+    {
+      "id": "I",
+      "name": "in Bearbeitung",
+      "is_active": true
+    },
+    {
+      "id": "N",
+      "name": "nicht genehmigt",
+      "is_active": true
+    },
+    {
+      "id": "U",
+      "name": "kann (noch) nicht validiert werden",
+      "is_active": true
+    }
+  ],
+  "rarity": [
+    {
+      "id": 0,
+      "name": "unbekannt",
+      "is_active": true
+    },
+    {
+      "id": 1,
+      "name": "allgemein",
+      "is_active": true
+    },
+    {
+      "id": 2,
+      "name": "relativ häufig",
+      "is_active": true
+    },
+    {
+      "id": 3,
+      "name": "selten",
+      "is_active": true
+    },
+    {
+      "id": 4,
+      "name": "sehr selten",
+      "is_active": true
+    }
+  ],
+  "counting_method": [
+    {
+      "id": 1,
+      "name": "unbekannt",
+      "is_active": true,
+      "is_default": true
+    },
+    {
+      "id": 2,
+      "name": "genaue Anzahl",
+      "is_active": true
+    },
+    {
+      "id": 3,
+      "name": "beobachtet, aber nicht gezählt",
+      "is_active": true
+    },
+    {
+      "id": 6,
+      "name": "geschätzt",
+      "is_active": true
+    },
+    {
+      "id": 7,
+      "name": "extrapoliert",
+      "is_active": true
+    },
+    {
+      "id": 10,
+      "name": "Abundanz",
+      "is_active": true
+    }
+  ],
+  "obscurity": [
+    {
+      "id": 0,
+      "name": "öffentlich",
+      "is_active": true,
+      "is_default": true
+    },
+    {
+      "id": 1,
+      "name": "verdeckt (1km)",
+      "is_active": true
+    },
+    {
+      "id": 5,
+      "name": "verdeckt (5km)",
+      "is_active": true
+    },
+    {
+      "id": 9,
+      "name": "verborgen",
+      "is_active": true
+    }
+  ],
+  "species_type": [
+    {
+      "id": "S",
+      "name": "Art",
+      "is_active": true
+    },
+    {
+      "id": "H",
+      "name": "Hybride (Bastard)",
+      "is_active": true
+    },
+    {
+      "id": "M",
+      "name": "Sammelart",
+      "is_active": true
+    },
+    {
+      "id": "Y",
+      "name": "Synonym",
+      "is_active": true
+    },
+    {
+      "id": "V",
+      "name": "Abart (Varietät)",
+      "is_active": true
+    },
+    {
+      "id": "I",
+      "name": "Unterart",
+      "is_active": true
+    },
+    {
+      "id": "F",
+      "name": "Form",
+      "is_active": true
+    }
+  ],
+  "species_status": [
+    {
+      "id": 1,
+      "name": "kommt nicht vor",
+      "is_active": true
+    },
+    {
+      "id": 2,
+      "name": "katalogisiert werden",
+      "is_active": true
+    },
+    {
+      "id": 3,
+      "name": "korrekt, zu spezifizieren",
+      "is_active": true
+    },
+    {
+      "id": 4,
+      "name": "heimisch",
+      "is_active": true
+    },
+    {
+      "id": 5,
+      "name": "gelegentlicher Einwanderer",
+      "is_active": true
+    },
+    {
+      "id": 6,
+      "name": "eingebürgert",
+      "is_active": true
+    },
+    {
+      "id": 7,
+      "name": "adventiv",
+      "is_active": true
+    },
+    {
+      "id": 8,
+      "name": "exotisch",
+      "is_active": true
+    },
+    {
+      "id": 9,
+      "name": "vereinzelte Importfälle",
+      "is_active": true
+    },
+    {
+      "id": 10,
+      "name": "unzureichende Daten",
+      "is_active": true
+    },
+    {
+      "id": 11,
+      "name": "fehlerhafte Beobachtungen",
+      "is_active": true
+    },
+    {
+      "id": 12,
+      "name": "erwartet",
+      "is_active": true
+    },
+    {
+      "id": 13,
+      "name": "Name falsch verwendet",
+      "is_active": true
+    },
+    {
+      "id": 14,
+      "name": "Sonstiges",
+      "is_active": true
+    },
+    {
+      "id": 15,
+      "name": "ausgestorben",
+      "is_active": true
+    }
+  ]
+}

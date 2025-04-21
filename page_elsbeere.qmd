@@ -1,5 +1,6 @@
 ---
 title: "City Nature Challenge 2025: Elsbeere Wienerwald"
+subtitle: https://www.inaturalist.org/projects/city-nature-challenge-2025-elsbeere-wienerwald
 lang: 'de-AT'
 execute:
   warning: false
@@ -10,8 +11,6 @@ date: last-modified
 date-format: "YYYY-MM-DDTHH:mm:ssZ"
 ---
 
-- https://www.inaturalist.org/projects/city-nature-challenge-2025-elsbeere-wienerwald
-
 {{< include _init.qmd >}}
 
 
@@ -19,7 +18,7 @@ date-format: "YYYY-MM-DDTHH:mm:ssZ"
 #| include: false
 #| cache: false
 projectId <- c("Elsbeere" = "225365")
-obsResults <- loadObs(projectId)
+resultsDf <- loadINat(projectId)
 ```
 
 {{< include _body.qmd >}}

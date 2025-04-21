@@ -1,5 +1,6 @@
 ---
 title: "Demo - Projekt"
+subtitle: https://www.inaturalist.org/projects/beehive-fauna
 lang: 'de-AT'
 execute:
   warning: false
@@ -9,8 +10,6 @@ date: last-modified
 date-format: "YYYY-MM-DDTHH:mm:ssZ"
 ---
 
-- [inaturalist.org/projects/beehive-fauna](https://www.inaturalist.org/projects/beehive-fauna)
-
 {{< include _init.qmd >}}
 
 
@@ -18,7 +17,7 @@ date-format: "YYYY-MM-DDTHH:mm:ssZ"
 #| include: false
 #| cache: false
 projectId <- c("Demo" = "27173")
-obsResults <- loadObs(projectId)
+resultsDf <- loadINat(projectId)
 ```
 
 {{< include _body.qmd >}}

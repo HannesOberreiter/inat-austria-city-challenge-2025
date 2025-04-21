@@ -25,20 +25,20 @@ relictSpecies <- readr::read_csv2("data/primeval_forest_relict_beetle.csv")
 ```{r init}
 #| include: false
 #! cache: false
-obsResultsList <- list()
+iNatResultsList <- list()
 bioResultList <- list()
 for(i in 1:length(projectIds)){
-    tempResult <- loadObs(projectIds[i])
-    obsResultsList[[i]] <- tempResult
+    tempResult <- loadINat(projectIds[i])
+    iNatResultsList[[i]] <- tempResult
 }
 for(i in 1:length(locationIds)){
-    tempResult <- loadBio(locationIds[i])
+    tempResult <- loadObs(locationIds[i])
     bioResultList[[i]] <- tempResult
 }
-obsResults <- bind_rows(obsResultsList)
+inatResults <- bind_rows(iNatResultsList)
 bioResults <- bind_rows(bioResultList)
-if(nrow(obsResults) == 0){
-  obsResults = NULL
+if(nrow(inatResults) == 0){
+  resultsDf = NULL
 }
 if(nrow(bioResults) == 0){
   bioResults = NULL
@@ -48,8 +48,8 @@ if(nrow(bioResults) == 0){
 ## iNaturalist Projekte
 
 ```{r relictTable}
-if(!is.null(obsResults)){
-  obsResults |> 
+if(!is.null(inatResults)){
+  inatResults |> 
     filter((taxonRank == 'species' | taxonRank == 'subspecies')) |>
     left_join(relictSpecies, by = c('scientificName' = 'Species')) |>
     filter(!is.na(Category)) |>

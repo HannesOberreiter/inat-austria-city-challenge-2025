@@ -19,7 +19,7 @@ about:
       href: https://github.com/HannesOberreiter
 ---
 
-Auswertung der österreichischen iNaturalist City Challenge. Seite wird automatisch alle paar Stunden aktualisiert. Die Daten werden von [iNaturalist](https://www.inaturalist.org/) bereitgestellt.
+Auswertung der österreichischen City Challenge. Seite wird automatisch alle paar Stunden aktualisiert. Die Daten werden von [iNaturalist](https://www.inaturalist.org/) und [Observation.org](https://observation.org) bereitgestellt.
 
 <hr/>
 

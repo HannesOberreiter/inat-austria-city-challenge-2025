@@ -15,6 +15,7 @@ library(leaflet)
 library(data.table)
 library(furrr)
 library(purrr)
+library(rlang)
 
 theme_set(theme_classic(base_size = 12))
 colorBlindBlack8 <- c(
@@ -31,7 +32,9 @@ options(ggplot2.discrete.fill = colorBlindBlack8)
 #| include: false
 #| cache: true
 
-projectIds <- c("Mittelkärnten" = "218931", "Gesäuse" = "225285", "Industrieviertel" = "231426", "Krems" = "220961", "Marchegg" = "229928", "St.Pölten" = "228867", "Elsbeere" = "225365", "Neusiedlersee" = "224160", "Amstetten" = "228551", "Graz" = "220708", "Innsbruck" = "226061", "Wien" = "224108")
+projectIds <- c("Demo" = "27173")
+
+#projectIds <- c("Mittelkärnten" = "218931", "Gesäuse" = "225285", "Industrieviertel" = "231426", "Krems" = "220961", "Marchegg" = "229928", "St.Pölten" = "228867", "Elsbeere" = "225365", "Neusiedlersee" = "224160", "Amstetten" = "228551", "Graz" = "220708", "Innsbruck" = "226061", "Wien" = "224108")
 
 # Observation.org
 locationIds <- c("Salzburg" = "606489", "Vorarlberg" = "606492")
@@ -84,16 +87,16 @@ fetchTxt <- function(url){
 }
 
 # iNaturalist
-loadObs <- function(projectId, maxLoops = 1000){
+loadINat <- function(projectId, maxLoops = 1000){
    tryCatch(
      exp = {
-      checkIfFileExists <- file.exists(glue("data/obs_{projectId}.csv"))
+      checkIfFileExists <- file.exists(glue("data/inat_{projectId}.csv"))
       if(checkIfFileExists){
         print("File exists, loading from file")
-        obsResults <- fread(
-          glue("data/obs_{projectId}.csv"), sep = ",", dec=".", stringsAsFactors = FALSE, encoding = "UTF-8", colClasses = "character"
+        resultsDf <- fread(
+          glue("data/inat_{projectId}.csv"), sep = ",", dec=".", stringsAsFactors = FALSE, encoding = "UTF-8", colClasses = "character"
         )
-        return(obsResults)
+        return(resultsDf)
       }
       apiEndpoint <- "https://api.inaturalist.org/v2/observations"
       fields <- "(id:!t,uri:!t,quality_grade:!t,num_identification_disagreements:!t,time_observed_at:!t,location:!t,user:(name:!t,id:!t,login:!t),taxon:(id:!t),identifications:(user:(name:!t,login:!t)))"
@@ -151,7 +154,7 @@ loadObs <- function(projectId, maxLoops = 1000){
         print("No results")
         return(NULL)
       }
-      obsResults <- bind_rows(obsList) |>
+      resultsDf <- bind_rows(obsList) |>
         left_join(taxas, by = c("taxon.id" = "id"))|> 
         mutate(
           user.name = ifelse(is.na(user.name) | user.name == '', user.login, user.name),
@@ -161,7 +164,7 @@ loadObs <- function(projectId, maxLoops = 1000){
           uri_html = glue("<a href='{uri}'>{id}</a>"),
         ) |>
         distinct(uuid, .keep_all = TRUE) # catch any possible double entries due to our loop logic
-      return(obsResults)
+      return(resultsDf)
      },
     error = function(e){
       message('Caught an error!')
@@ -179,22 +182,24 @@ loadObs <- function(projectId, maxLoops = 1000){
   )
 }
 
-# Lookup constants for Observation.org observations
-lookup <- fetchTxt("https://observation.org/api/v1/lookups/") |> jsonlite::fromJSON() |>
+# https://observation.org/api/v1/lookups
+lookup <- jsonlite::fromJSON("data/lookup.json") |>
           map(~ bind_rows(.x)) |>
           imap(\(x, idx) x %>% rename_with(~paste0(idx, "_name", recycle0 = TRUE), .cols = "name"))
 
+
+
 # Observation.org
-loadBio <- function(locationId, maxLoops = 1000, date_after = "2025-04-25", date_before = "2025-04-28"){
+loadObs <- function(locationId, maxLoops = 1000, date_after = "2025-04-25", date_before = "2025-04-28"){
    tryCatch(
      exp = {
-      checkIfFileExists <- file.exists(glue("data/bio_{locationId}.csv"))
+      checkIfFileExists <- file.exists(glue("data/obs_{locationId}.csv"))
       if(checkIfFileExists){
         print("File exists, loading from file")
-        obsResults <- fread(
-          glue("data/bio_{projectId}.csv"), sep = ",", dec=".", stringsAsFactors = FALSE, encoding = "UTF-8", colClasses = "character"
+        resultsDf <- fread(
+          glue("data/obs_{locationId}.csv"), sep = ",", dec=".", stringsAsFactors = FALSE, encoding = "UTF-8", colClasses = "character"
         )
-        return(obsResults)
+        return(resultsDf)
       }
       apiEndpoint <- glue("https://observation.org/api/v1/locations/{locationId}/observations/")
       perPage <- 5000
@@ -253,24 +258,35 @@ loadBio <- function(locationId, maxLoops = 1000, date_after = "2025-04-25", date
         return(NULL)
       }
       
-      obsResults <- bind_rows(obsList)  |>
+      resultsDf <- bind_rows(obsList)  |>
             unnest_wider(species_detail, names_sep = "_") |>
-            unnest_wider(user_detail, names_sep = "_") |>
-            
+            unnest_wider(point, names_sep = "_") |>
+            drop_na(point_type, point_coordinates) |>
+
             left_join(lookup$species_type, by = c("species_detail_type" = "id")) |>
             left_join(lookup$rarity, by = c("rarity" = "id")) |>
             left_join(lookup$validation_status, by = c("validation_status" = "id")) |>
             left_join(lookup$species_status, by = c("species_status" = "id")) |>
             
             mutate(
+              # Create similar structure to iNaturalist
               time_observed_at = glue("{date} {time}:00") |> as.character(),
               project.id = locationId,
               project.name = names(locationId),
               project.type = "obs",
+              user.id = user_detail$id,
               uri_html = glue("<a href='{permalink}'>{permalink}</a>"),
-            )
+              user.name = ifelse(is.na(user_detail$name) | user_detail$name == '', user_detail$login, user_detail$name),
+              location = glue("{map_dbl(point_coordinates, ~ .x[[1]][2])},{map_dbl(point_coordinates, ~ .x[[1]][1])}"),
+              uri = permalink,
+              scientificName = species_detail_scientific_name,
+              vernacularName = species_detail_name,
+            ) |>
+            # Drop nested columns and convert all to chr for joining with iNat
+            select(-c("point_coordinates", "user_detail", "location_detail", "links", "details")) |>
+            mutate(across(everything(), as.character))
 
-      return(obsResults)
+      return(resultsDf)
      },
     error = function(e){
       message('Caught an error!')
@@ -287,4 +303,53 @@ loadBio <- function(locationId, maxLoops = 1000, date_after = "2025-04-25", date
     }
   )
 }
+```
+
+```{r utils}
+#| include: false
+#| cache: true
+
+# Filter species level
+filterSpeciesLevel <- function(df){
+  df %>%  
+    filter(
+      (project.type == 'inat' & 
+       (if (all(has_name(., "taxonRank"))) {
+          (taxonRank %in% c('species', 'subspecies'))
+        } else {
+          FALSE 
+        })
+      ) |
+      (project.type == 'obs' & 
+       (if (all(has_name(., "species_detail_type"))) {
+          (species_detail_type %in% c('S', 'I'))
+        } else {
+          FALSE
+        })
+      )
+    )
+}
+
+# Filter species level and only research grade or with a valid validation status 
+filterSpeciesLevelResearch <- function(df){
+  df %>%  
+    filter(
+      (project.type == 'inat' & 
+       (if (all(has_name(., "taxonRank"), has_name(., "quality_grade"))) {
+          (taxonRank %in% c('species', 'subspecies')) & quality_grade == 'research'
+        } else {
+          FALSE 
+        })
+      ) |
+      (project.type == 'obs' & 
+       (if (all(has_name(., "species_detail_type"), has_name(., "validation_status"))) {
+          (species_detail_type %in% c('S', 'I')) & validation_status %in% c("J", "A", "P")
+        } else {
+          FALSE
+        })
+      )
+    )
+}
+
+
 ```

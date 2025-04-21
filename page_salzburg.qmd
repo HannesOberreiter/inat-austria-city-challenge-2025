@@ -1,5 +1,6 @@
 ---
 title: "City Nature Challenge 2025: Salzburg"
+subtitle: https://observation.org/bioblitz/16314/salzburg-cnc-2025/
 lang: 'de-AT'
 execute:
   warning: false
@@ -10,8 +11,6 @@ date: last-modified
 date-format: "YYYY-MM-DDTHH:mm:ssZ"
 ---
 
-- https://observation.org/bioblitz/16314/salzburg-cnc-2025/
-
 {{< include _init.qmd >}}
 
 
@@ -19,8 +18,8 @@ date-format: "YYYY-MM-DDTHH:mm:ssZ"
 #| include: false
 #| cache: false
 projectId <- c("Salzburg" = "606489")
-obsResults <- loadBio(projectId)
+resultsDf <- loadObs(projectId)
 ```
 
-{{< include _body_observation_org.qmd >}}
+{{< include _body.qmd >}}
 

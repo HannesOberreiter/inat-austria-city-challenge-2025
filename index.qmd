@@ -16,35 +16,39 @@ date-format: "YYYY-MM-DDTHH:mm:ssZ"
 - [https://www.citynaturechallenge.at/](https://www.citynaturechallenge.at/)
 - [inaturalist.org/projects/city-nature-challenges-in-oesterreich-2025](https://www.inaturalist.org/projects/city-nature-challenges-in-oesterreich-2025)
 
-
-<i style="color: red;">
-  Anmerkung: Salzburg und Vorarlberg sind nur in der Einzel Region Analyse vorhanden, da diese von einer anderen Plattform kommen.
-</i>
-
 {{< include _init.qmd >}}
 
 ```{r init}
 #| include: false
 #| cache: false
-obsResultsList <- list()
+inatResultsList <- list()
+resultsDfList <- list()
 for(i in 1:length(projectIds)){
-  tempResult <- loadObs(projectIds[i])
+  tempResult <- loadINat(projectIds[i])
   if(!is.null(tempResult)){
-    write_csv(tempResult, paste0("data/obs_", projectIds[i], ".csv"), quote = "all")
-    obsResultsList[[i]] <- tempResult
+    write_csv(tempResult, paste0("data/inat_", projectIds[i], ".csv"), quote = "all")
+    inatResultsList[[i]] <- tempResult
   }
 }
-obsResults <- bind_rows(obsResultsList)
-if(nrow(obsResults) == 0){
-  obsResults = NULL
+for(i in 1:length(locationIds)){
+  tempResult <- loadObs(locationIds[i], date_after = "2024-01-01", date_before = "2024-01-01")
+  if(!is.null(tempResult)){
+    write_csv(tempResult, paste0("data/obs_", locationIds[i], ".csv"), quote = "all")
+    resultsDfList[[i]] <- tempResult
+  }
+}
+resultsDf <- bind_rows(inatResultsList, resultsDfList)
+
+if(nrow(resultsDf) == 0){
+  resultsDf = NULL
 }
 ```
 
 ```{r CompareProjects}
 #| label: fig-projects
 #| fig-cap: "Anzahl der Beobachtungen in den einzelnen Projekt Regionen"
-if(!is.null(obsResults)){
-  obsResults |>
+if(!is.null(resultsDf)){
+  resultsDf |>
     group_by(project.name) |>
     summarise(n = n()) |>
     ggplot(
@@ -61,19 +65,17 @@ if(!is.null(obsResults)){
 }
 ```
 
-
-
 ## Indizes zwischen den Regionen
 
 ```{r CompareProjects2}
-if(!is.null(obsResults)){
-  obsResults |>
+if(!is.null(resultsDf)){
+  resultsDf |>
     group_by(project.name) |>
     summarise(
       nObserver = n_distinct(user.name),
       nObservations = n(),
       nTaxa = n_distinct(scientificName),
-      nResearchGrade = sum(quality_grade == "research"),
+      nResearchGrade = sum(quality_grade == "research", na.rm = TRUE) + sum(validation_status %in% c("J", "A", "P"), na.rm = TRUE),
       ) |>
     select("Region" = project.name, "BeobachterInnen" = nObserver, "Beobachtungen" = nObservations, "Taxa" = nTaxa, "Research Grade" = nResearchGrade) |>
     datatable(rownames = FALSE)
@@ -82,13 +84,14 @@ if(!is.null(obsResults)){
 }
 ```
 
-## Beobachtungen Regnum
+## Beobachtungen Regnum (iNaturalist)
 
 ```{r plotRegnum}
 #| label: fig-Regnum
 #| fig-cap: Absolute Anzahl der Beobachtungen pro Reich, aufgeteilt in teilnehmende Regionen
-if(!is.null(obsResults)){
-  obsResults |> 
+if(!is.null(resultsDf)){
+  resultsDf |> 
+    filter(project.type == 'inat') |>
     drop_na(kingdom) |> 
     count(kingdom, project.name) |> 
     select(n, "Region" = project.name, kingdom) |>
