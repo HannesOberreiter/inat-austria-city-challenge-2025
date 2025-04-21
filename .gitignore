@@ -58,4 +58,5 @@ rsconnect/
 
 # HTML in root folder
 *.html
+!assets/*.html
 
