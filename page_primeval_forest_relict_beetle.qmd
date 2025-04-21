@@ -24,33 +24,26 @@ relictSpecies <- readr::read_csv2("data/primeval_forest_relict_beetle.csv")
 
 ```{r init}
 #| include: false
-#! cache: false
-iNatResultsList <- list()
-bioResultList <- list()
+#| cache: false
+inatResultsList <- list()
+resultsDfList <- list()
 for(i in 1:length(projectIds)){
-    tempResult <- loadINat(projectIds[i])
-    iNatResultsList[[i]] <- tempResult
+  inatResultsList[[i]] <- loadINat(projectIds[i])
 }
 for(i in 1:length(locationIds)){
-    tempResult <- loadObs(locationIds[i])
-    bioResultList[[i]] <- tempResult
+  resultsDfList[[i]] <- loadObs(locationIds[i])
 }
-inatResults <- bind_rows(iNatResultsList)
-bioResults <- bind_rows(bioResultList)
-if(nrow(inatResults) == 0){
+resultsDf <- bind_rows(inatResultsList, resultsDfList)
+
+if(nrow(resultsDf) == 0){
   resultsDf = NULL
-}
-if(nrow(bioResults) == 0){
-  bioResults = NULL
 }
 ```
 
-## iNaturalist Projekte
-
 ```{r relictTable}
-if(!is.null(inatResults)){
-  inatResults |> 
-    filter((taxonRank == 'species' | taxonRank == 'subspecies')) |>
+if(!is.null(resultsDf)){
+  resultsDf |> 
+    filterSpeciesLevel() |>
     left_join(relictSpecies, by = c('scientificName' = 'Species')) |>
     filter(!is.na(Category)) |>
     select(
@@ -60,39 +53,6 @@ if(!is.null(inatResults)){
         "Kategorie" = Category, 
         "Region" = project.name, 
         'Umgangspr. Name' = vernacularName
-        ) |>
-    datatable(
-      rownames = FALSE, 
-      escape = FALSE,
-      filter = list(
-        position = 'bottom',
-        clear = FALSE,
-        plain = TRUE
-     ),
-      options = list(
-        columnDefs = list(list(type = 'html', targets = c(1)))
-      )
-    )
-} else {
-  print('Noch keine Beobachtungen')
-}
-```
-
-## Observation.org Projekte
-
-```{r relictTableBio}
-if(!is.null(bioResults)){
-  bioResults |> 
-    #filter((species_type_name == 'species' | taxonRank == 'subspecies')) |>
-    left_join(relictSpecies, by = c('species_detail_scientific_name' = 'Species')) |>
-    filter(!is.na(Category)) |>
-    select(
-        "Link" = uri_html,
-        "Spezies" = species_detail_scientific_name, 
-        "Familie" = Family, 
-        "Kategorie" = Category, 
-        "Region" = project.name, 
-        'Umgangspr. Name' = species_detail_name
         ) |>
     datatable(
       rownames = FALSE, 
