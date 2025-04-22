@@ -1,5 +1,5 @@
 ---
-title: "CNC: Urwaltreliktkäfer"
+title: "City Nature Challenge: Urwaldreliktkäfer"
 lang: 'de-AT'
 bibliography: references.bib
 execute:
@@ -11,7 +11,7 @@ date: last-modified
 date-format: "YYYY-MM-DDTHH:mm:ssZ"
 ---
 
-Liste der Coleoptera Reliktarten beobachtet beim CNC für alle Regionen. Artenliste anhand von @eckelt2018.
+Diese Seite listet die während der City Nature Challenge in allen teilnehmenden Regionen beobachteten Urwaldreliktkäfer (Coleoptera) auf. Die Artenliste basiert auf @eckelt2018.
 
 {{< include _init.qmd >}}
 

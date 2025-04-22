@@ -11,8 +11,6 @@ date: last-modified
 date-format: "YYYY-MM-DDTHH:mm:ssZ"
 ---
 
-- 
-
 {{< include _init.qmd >}}
 
 ```{r init}

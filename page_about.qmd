@@ -19,8 +19,8 @@ about:
       href: https://github.com/HannesOberreiter
 ---
 
-Auswertung der österreichischen City Challenge. Seite wird automatisch alle paar Stunden aktualisiert. Die Daten werden von [iNaturalist](https://www.inaturalist.org/) und [Observation.org](https://observation.org) bereitgestellt.
+Diese Seite enthält die Auswertung der österreichischen City Challenge und wird automatisch alle paar Stunden aktualisiert. Die Daten stammen von [iNaturalist](https://www.inaturalist.org/) und [Observation.org](https://observation.org).
 
 <hr/>
 
-Made by [Hannes Oberreiter](https://www.btree.at) with the help of [R](https://www.r-project.org/), [Quarto](https://quarto.org/) and many other great Open Source tools.
+Erstellt von [Hannes Oberreiter](https://www.btree.at) mit Hilfe von [R](https://www.r-project.org/), [Quarto](https://quarto.org/) und vielen weiteren großartigen Open-Source-Tools.
