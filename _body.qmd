@@ -390,7 +390,7 @@ iNaturalist teilt die Beobachtungsqualität in drei Stufen ein:
 - **Forschungsqualität (research):** Bestätigte Beobachtungen auf Artebene.
 
 ```{r plotQuality}
-#| label: fig-Quality
+#| label: fig-QualityINat
 #| fig-cap: "Verteilung der Beobachtungsqualität auf iNaturalist"
 if(!is.null(resultsINat)){
   resultsINat |> 
