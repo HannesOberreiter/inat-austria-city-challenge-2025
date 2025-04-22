@@ -36,11 +36,11 @@ if(!is.null(resultsDf)){
 }
 ```
 
-Insgesamt wurden **`r nrow(resultsDf)`** Beobachtungen von **`r length(distinctObserver)`** Beobachterinnen und Beobachtern hochgeladen. Das ergibt einen Mittelwert von **`r statsObserver$mean[1]`** Beobachtungen pro Beobachter bzw. Beobachterin und einen Median von **`r statsObserver$median[1]`**. Auf Spezies-Ebene wurden **`r length(distinctSpecies)`** Beobachtungen hochgeladen.
+Insgesamt wurden **`r nrow(resultsDf)`** Beobachtungen von **`r length(distinctObserver)`** Beobachterinnen und Beobachtern hochgeladen. Dies ergibt einen Mittelwert von **`r statsObserver$mean[1]`** und einen Median von **`r statsObserver$median[1]`** Beobachtungen pro Person. Auf Artebene (Spezies-Ebene) wurden **`r length(distinctSpecies)`** unterschiedliche Arten beobachtet.
 
 ```{r plotUserHistogram}
 #| label: fig-histo
-#| fig-cap: "Histogramm der Beobachtungen pro Beobachter/in"
+#| fig-cap: "Histogramm der Anzahl Beobachtungen pro Beobachter/in"
 if(!is.null(resultsDf)){
   resultsDf |>
     count(user.id) |>
@@ -66,7 +66,7 @@ if(!is.null(resultsDf)){
 
 ```{r plotUserTime}
 #| label: fig-time
-#| fig-cap: "In welcher Stunde an welchen Wochentag wie viele Beobachtungen gemacht wurden"
+#| fig-cap: "Anzahl der Beobachtungen pro Stunde und Wochentag"
 if(!is.null(resultsDf)){
   tempDf <- resultsDf |> 
     drop_na(time_observed_at)
@@ -187,16 +187,15 @@ if(!is.null(resultsINat)){
 
 ```
 
-User (auch bekannt als Birder) **`r isBirder$user.name[1]`** hat `r isBirder$n[1]` Vogelbeobachtungen hochgeladen - mehr als jede/r andere. Besonders liebt der User bzw. die Userin **`r mostDuplicatedObservations$user.name[1]`** die Art *`r mostDuplicatedObservations$scientificName[1]`*, die er/sie bereits `r mostDuplicatedObservations$n[1]` Mal hochgeladen hat. Das Taxon mit dem längsten Namen ist **_`r longestName$scientificName[1]`_**, das `r longestName$nameLength[1]` Zeichen lang ist.
+Der/Die User/in (auch bekannt als Birder) **`r isBirder$user.name[1]`** hat mit `r isBirder$n[1]` Vogelbeobachtungen die meisten Beiträge in dieser Kategorie hochgeladen. Besonders häufig, nämlich `r mostDuplicatedObservations$n[1]` Mal, hat der/die User/in **`r mostDuplicatedObservations$user.name[1]`** die Art *`r mostDuplicatedObservations$scientificName[1]`* beobachtet. Das Taxon mit dem längsten wissenschaftlichen Namen ist **_`r longestName$scientificName[1]`_** mit `r longestName$nameLength[1]` Zeichen.
 
 ## Top Beobachter/innen
 
-In dieser Liste werden auch doppelte Beobachtungen gezählt, jedoch sollte dies nicht als Tipp betrachtet werden, um an erster Stelle zu stehen.
+Diese Liste zeigt die Beobachter/innen, geordnet nach der Gesamtzahl ihrer Beobachtungen (inklusive Mehrfachbeobachtungen derselben Art).
 
 ```{r tableTopObserver}
 #| label: tbl-topObserver
-#| tbl-cap: Beobachter/innen und deren Uploads geordnet nach Anzahl der Beobachtungen.
-
+#| tbl-cap: "Beobachter/innen geordnet nach der Anzahl ihrer Beobachtungen"
 if(!is.null(resultsDf)){
   resultsDf |> 
     count(user.id, user.name) |>
@@ -210,7 +209,7 @@ if(!is.null(resultsDf)){
 
 ## Top Bestimmer/Innen (iNaturalist)
 
-Die erhobenen Beobachtungen werden erst durch die unerschöpfliche Arbeit der Bestimmer/innen zu wertvollen Daten. An dieser Stelle ein großes Dankeschön an alle Bestimmer/innen ohne euch wäre iNaturalist nicht das, was es heute ist.
+Die hochgeladenen Beobachtungen gewinnen erst durch die wertvolle Arbeit der Bestimmer/innen an wissenschaftlicher Bedeutung. Ein großes Dankeschön an alle, die durch ihre Bestimmungen iNaturalist zu dem machen, was es heute ist!
 
 ```{r tableTopIdentifier}
 # This function could (should) be vectorized to speed up the process
@@ -258,12 +257,11 @@ if(!is.null(resultsINat)){
 
 ## Top Beobachter/innen mit den meisten unterschiedlichen Arten
 
-Nur Beobachtungen zumindest auf Spezies-Ebene und Research-Grade oder positiven Validierung Status werden gezählt. 
+Gezählt werden nur Beobachtungen, die mindestens auf Artebene bestimmt und als "Research Grade" (iNaturalist) eingestuft oder positiv validiert (Observation.org) wurden.
 
 ```{r tableTopObserverSpecies}
 #| label: tbl-topObserverSpecies
-#| tbl-cap: Liste der Beobachter/Innen und Anzahl der unterschiedlichen Arten.
-
+#| tbl-cap: "Liste der Beobachter/innen, geordnet nach der Anzahl unterschiedlicher beobachteter Arten"
 if(!is.null(resultsDf)){
   resultsDf |> 
     filterSpeciesLevelResearch() |>
@@ -279,11 +277,11 @@ if(!is.null(resultsDf)){
 
 ## Top Taxa (Spezies-Ebene)
 
-In dieser Liste sind die am häufigsten beobachteten Taxa auf Spezies-Ebene aufgeführt, die bereits identifiziert wurden.
+Diese Liste enthält die am häufigsten beobachteten und bereits auf Artebene bestimmten Taxa ("Research Grade" oder positiv validiert).
 
 ```{r tableTopTaxa}
 #| label: tbl-topTaxa
-#| tbl-cap: Taxa mit Research-Grade auf Spezies-Ebene geordnet nach Anzahl der Beobachtungen.
+#| tbl-cap: "Häufigste Taxa (Artebene, Research Grade/validiert), geordnet nach Anzahl der Beobachtungen."
 if(!is.null(resultsDf)){
   resultsDf |> 
     filterSpeciesLevelResearch() |>
@@ -298,11 +296,11 @@ if(!is.null(resultsDf)){
 
 ## Unique Taxa mit Research-Grade
 
-Besonders erfreulich sind natürlich immer einzigartige Funde, die nur von einer Person in der Challenge hochgeladen wurden.
+Einzigartige Funde, die nur von einer einzigen Person während der Challenge beobachtet und hochgeladen wurden, sind besonders erfreulich.
 
 ```{r tableUniqueTaxa}
 #| label: tbl-uniqueTaxa
-#| tbl-cap: Einmalige Taxa mit Research-Grade auf Spezies-Ebene inklusive Angabe des Users.
+#| tbl-cap: "Einmalig beobachtete Taxa (Artebene, Research Grade/validiert) mit Angabe des/der Beobachters/in"
 if(!is.null(resultsDf)){
   resultsDf |> 
     filterSpeciesLevelResearch() |>
@@ -324,11 +322,11 @@ if(!is.null(resultsDf)){
 
 ## Raritäten (observation.org)
 
-Observation.org hat eine eigene Einteilung in Seltenheiten, die sich von der iNaturalist-Einteilung unterscheidet. Die Einteilung ist wie folgt:
+Observation.org verwendet eine eigene Einstufung für die Seltenheit von Beobachtungen, die sich von der iNaturalist-Einteilung unterscheidet. Die Verteilung dieser Raritätsstufen ist unten dargestellt.
 
 ```{r plotQuality}
 #| label: fig-QualityRarity
-#| fig-cap: "Verteilung des Raritäten Level auf observation.org"
+#| fig-cap: "Verteilung der Raritätsstufen auf observation.org"
 if(!is.null(resultsObs)){
   resultsObs |>
     count(rarity_name) |> 
@@ -360,11 +358,11 @@ if(!is.null(resultsObs)){
 
 ## Beobachtungen mit Rarität "selten" (observation.org)
 
-Die Beobachtungen mit Rarität "selten" sind in der Liste unten aufgeführt.
+Die folgende Liste zeigt Beobachtungen, die auf observation.org als "selten" eingestuft wurden.
 
 ```{r tableRarityTaxa}
 #| label: tbl-rarityTaxa
-#| tbl-cap: Beobachtungen die laut observation.org selten sind.
+#| tbl-cap: "Beobachtungen, die laut observation.org als selten gelten"
 if(!is.null(resultsObs)){
   resultsObs |> 
     filter(rarity >= 3) |>
@@ -386,7 +384,10 @@ if(!is.null(resultsObs)){
 
 ## Beobachtungs Qualität (iNaturalist)
 
-iNaturalist unterteilt die Beobachtungsqualität in drei Kategorien. Die Kategorie "causal" umfasst Beobachtungen, bei denen mindestens eines der folgenden Elemente fehlt: das Datum der Beobachtung, der Beobachtungsort oder ein Foto (oder Tonaufnahme). Die Kategorie "needs_id" wird angezeigt, bis mindestens zwei Personen eine Spezies für diesen Upload einstimmig bestimmt haben, ohne Widerspruch. Die letzte und wertvollste Kategorie ist "research", die bestätigte Beobachtungen auf Spezies-Ebene umfasst.
+iNaturalist teilt die Beobachtungsqualität in drei Stufen ein:
+- **Zwanglos (casual):** Beobachtungen, bei denen Datum, Ort oder ein Belegfoto/-ton fehlt.
+- **Benötigt Bestimmung (needs_id):** Beobachtungen, bei denen noch keine übereinstimmende Bestimmung durch mindestens zwei Personen vorliegt.
+- **Forschungsqualität (research):** Bestätigte Beobachtungen auf Artebene.
 
 ```{r plotQuality}
 #| label: fig-Quality
@@ -424,7 +425,7 @@ if(!is.null(resultsINat)){
 
 ```{r plotPhylum}
 #| label: fig-Phylum
-#| fig-cap: Relative und absolute Anzahl der Beobachtungen pro Phylum
+#| fig-cap: "Relative und absolute Anzahl der Beobachtungen pro Phylum (Stamm)"
 if(!is.null(resultsINat)){
   resultsINat |> 
     count(phylum) |> 
@@ -462,7 +463,7 @@ if(!is.null(resultsINat)){
 
 ```{r plotInsecta}
 #| label: fig-Insecta
-#| fig-cap: Ordnungen innerhalb der Klasse Insecta und deren relative und absolute Anzahl an Beobachtungen.
+#| fig-cap: "Ordnungen innerhalb der Klasse Insecta: Relative und absolute Anzahl der Beobachtungen."
 if(!is.null(resultsINat)){
   obsInsecta <- resultsINat |> 
     filter(class == "Insecta") |>
@@ -498,9 +499,11 @@ if(!is.null(resultsINat)){
 
 ## Beobachtungen mit Konflikt Bestimmungen (iNaturalist)
 
+Diese Tabelle listet Beobachtungen auf, bei denen Uneinigkeit über das bestimmte Taxon zwischen den Usern besteht.
+
 ```{r tableConflict}
 #| label: tbl-Conflict
-#| tbl-cap: Beobachtungen wo User unterschiedlicher Meinung zum beobachteten Taxon sind.
+#| tbl-cap: "Beobachtungen mit widersprüchlichen Bestimmungen"
 if(!is.null(resultsINat)){
   resultsINat |> 
     filter(num_identification_disagreements > 0) |> 
@@ -519,11 +522,11 @@ if(!is.null(resultsINat)){
 
 ## Verifizierung Status (observation.org)
 
-Observation.org unterteilt die Beobachtungen in unterschiedliche Validierung Status.
+Observation.org klassifiziert Beobachtungen nach ihrem Validierungsstatus.
 
 ```{r plotVerification}
 #| label: fig-verification
-#| fig-cap: "Verteilung des Validierung auf observation.org"
+#| fig-cap: "Verteilung des Validierungsstatus auf observation.org"
 if(!is.null(resultsObs)){
   resultsObs |> 
     count(validation_status_name) |> 
@@ -555,11 +558,11 @@ if(!is.null(resultsObs)){
 
 ## Beobachtungen die nicht Verizifiert werden können (observation.org)
 
-Hier werden alle Beobachtungen angezeigt die nicht Verizifiert werden können oder nicht genehmigt wurden, auf observation.org.
+Hier werden Beobachtungen von observation.org angezeigt, die nicht verifiziert werden konnten oder deren Bestimmung nicht genehmigt wurde.
 
 ```{r tableUnverified}
 #| label: tbl-unverified
-#| tbl-cap: Unverfizierte Beobachtungen
+#| tbl-cap: "Nicht verifizierte oder nicht genehmigte Beobachtungen auf observation.org"
 if(!is.null(resultsObs)){
   resultsObs |> 
     filter(validation_status %in% c("N", "U")) |>
@@ -580,7 +583,7 @@ if(!is.null(resultsObs)){
 
 ```{r tableCheckList}
 #| label: tbl-CheckList
-#| tbl-cap: Beobachtungen die zumindest in einem EU Land auf der Roten Liste stehen inklusive Anzahl der Beobachtungen.
+#| tbl-cap: "Beobachtungen von Arten, die in zumindest einem EU-Land auf der Roten Liste (FFH-Anhänge) stehen"
 if(!is.null(resultsDf)){
   checkList |> 
     right_join(resultsDf, by = c("scientific_name" = "scientificName")) |>
@@ -596,7 +599,7 @@ if(!is.null(resultsDf)){
 ```
 ```{r tableBirdsList}
 #| label: tbl-BirdsList
-#| tbl-cap: Vogel Beobachtungen die zumindest in einem EU Land auf der Roten Liste AnnexI stehen inklusive Anzahl der Beobachtungen.
+#| tbl-cap: "Beobachtungen von Vogelarten, die in zumindest einem EU-Land auf der Roten Liste (Vogelschutzrichtlinie Anhang I) stehen"
 if(!is.null(resultsDf)){
   birdsList |> 
     right_join(resultsDf, by = c("scientific_name" = "scientificName")) |>
