@@ -17,6 +17,7 @@ library(furrr)
 library(purrr)
 library(rlang)
 
+plan(multisession, workers = 2)
 theme_set(theme_classic(base_size = 12))
 colorBlindBlack8 <- c(
     "#464343", "#E69F00", "#56B4E9", "#009E73",
@@ -154,8 +155,10 @@ loadINat <- function(projectId, maxLoops = 1000){
         message("No results")
         return(NULL)
       }
-      resultsDf <- bind_rows(obsList) |>
-        left_join(taxas, by = c("taxon.id" = "id"))|> 
+      resultsDf <- data.table::rbindlist(obsList, fill = TRUE)
+      resultsDf <- taxas[resultsDf, on = .(id = taxon.id)] 
+      
+      resultsDf <- resultsDf |>
         mutate(
           user.name = ifelse(is.na(user.name) | user.name == '', user.login, user.name),
           project.id = projectId,
@@ -165,7 +168,7 @@ loadINat <- function(projectId, maxLoops = 1000){
         ) |>
         distinct(uuid, .keep_all = TRUE) # catch any possible double entries due to our loop logic
 
-      write_csv(resultsDf, paste0("data/inat_", projectId, ".csv"), quote = "all")
+      fwrite(resultsDf, paste0("data/inat_", projectId, ".csv"), quote = TRUE)
       return(resultsDf)
      },
     error = function(e){
@@ -260,7 +263,7 @@ loadObs <- function(locationId, maxLoops = 1000, date_after = "2025-04-25", date
         return(NULL)
       }
       
-      resultsDf <- bind_rows(obsList)  |>
+      resultsDf <- rbindlist(obsList, fill = TRUE)  |>
             unnest_wider(species_detail, names_sep = "_") |>
             unnest_wider(point, names_sep = "_") |>
             drop_na(point_type, point_coordinates) |>
@@ -288,7 +291,7 @@ loadObs <- function(locationId, maxLoops = 1000, date_after = "2025-04-25", date
             select(-c("point_coordinates", "user_detail", "location_detail", "links", "details")) |>
             mutate(across(everything(), as.character))
       
-      write_csv(resultsDf, paste0("data/obs_", locationId, ".csv"), quote = "all")
+      fwrite(resultsDf, paste0("data/obs_", locationId, ".csv"), quote = TRUE)
       return(resultsDf)
      },
     error = function(e){
@@ -352,6 +355,29 @@ filterSpeciesLevelResearch <- function(df){
         })
       )
     )
+}
+
+loadAll <- function(){
+  future_iNat <- future({
+    message("Starting iNat data fetch...")
+    data_list <- purrr::map(projectIds, loadINat)
+    message("Finished iNat data fetch.")
+    data.table::rbindlist(data_list, fill = TRUE)
+  })
+  
+  future_Obs <- future({
+    message("Starting Obs data fetch...")
+    data_list <- purrr::map(locationIds, loadObs)
+    message("Finished Obs data fetch.")
+    data.table::rbindlist(data_list, fill = TRUE)
+  })
+  
+  message("Waiting for data fetching to complete...")
+  combined_inat_data <- value(future_iNat)
+  combined_obs_data <- value(future_Obs)
+  resultsDf <- rbindlist(list(combined_inat_data, combined_obs_data), fill = TRUE, use.names = TRUE)
+  message("Data fetching complete.")
+  return(resultsDf)
 }
 
 

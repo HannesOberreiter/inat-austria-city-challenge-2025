@@ -17,7 +17,7 @@ Diese Seite listet die während der City Nature Challenge in allen teilnehmenden
 
 ```{r loadRelictSpecies}
 #| include: false
-#! cache: false
+#| cache: false
 relictSpecies <- readr::read_csv2("data/primeval_forest_relict_beetle.csv")
 ```
 
@@ -25,18 +25,13 @@ relictSpecies <- readr::read_csv2("data/primeval_forest_relict_beetle.csv")
 ```{r init}
 #| include: false
 #| cache: false
-inatResultsList <- list()
-resultsDfList <- list()
-for(i in 1:length(projectIds)){
-  inatResultsList[[i]] <- loadINat(projectIds[i])
-}
-for(i in 1:length(locationIds)){
-  resultsDfList[[i]] <- loadObs(locationIds[i])
-}
-resultsDf <- bind_rows(inatResultsList, resultsDfList)
+resultsDf <- loadAll()
 
-if(nrow(resultsDf) == 0){
-  resultsDf = NULL
+if(is.null(resultsDf) || nrow(resultsDf) == 0){
+  resultsDf <- NULL
+  message("No data loaded from either source.")
+} else {
+   message(paste("Loaded", nrow(resultsDf), "total observations."))
 }
 ```
 
