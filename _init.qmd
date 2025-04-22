@@ -33,8 +33,10 @@ options(ggplot2.discrete.fill = colorBlindBlack8)
 #| include: false
 #| cache: true
 
-#projectIds <- c("Demo" = "27173")
+# Demo will be overwritten on the next line
+projectIds <- c("Demo" = "27173")
 
+# inaturalist.com
 projectIds <- c("Mittelkärnten" = "218931", "Gesäuse" = "225285", "Industrieviertel" = "231426", "Krems" = "220961", "Marchegg" = "229928", "St.Pölten" = "228867", "Elsbeere" = "225365", "Neusiedlersee" = "224160", "Amstetten" = "228551", "Graz" = "220708", "Innsbruck" = "226061", "Wien" = "224108")
 
 # Observation.org
@@ -88,7 +90,7 @@ fetchTxt <- function(url){
 }
 
 # iNaturalist
-loadINat <- function(projectId, maxLoops = 1000){
+loadINat <- function(projectId, projectName, maxLoops = 1000){
    tryCatch(
      exp = {
       checkIfFileExists <- file.exists(glue("data/inat_{projectId}.csv"))
@@ -156,13 +158,16 @@ loadINat <- function(projectId, maxLoops = 1000){
         return(NULL)
       }
       resultsDf <- data.table::rbindlist(obsList, fill = TRUE)
-      resultsDf <- taxas[resultsDf, on = .(id = taxon.id)] 
+      resultsDf <- taxas[resultsDf, on = .(id = taxon.id)]
+      
+      # Backward compatibility so we don't need to set the name on every function call 
+      projectName <- ifelse(is.null(projectName), names(projectId), projectName)
       
       resultsDf <- resultsDf |>
         mutate(
           user.name = ifelse(is.na(user.name) | user.name == '', user.login, user.name),
           project.id = projectId,
-          project.name = names(projectId),
+          project.name = projectName,
           project.type = "inat",
           uri_html = glue("<a href='{uri}'>{id}</a>"),
         ) |>
@@ -195,7 +200,7 @@ lookup <- jsonlite::fromJSON("data/lookup.json") |>
 
 
 # Observation.org
-loadObs <- function(locationId, maxLoops = 1000, date_after = "2025-04-25", date_before = "2025-04-28"){
+loadObs <- function(locationId, locationName, maxLoops = 1000, date_after = "2025-04-25", date_before = "2025-04-28"){
    tryCatch(
      exp = {
       checkIfFileExists <- file.exists(glue("data/obs_{locationId}.csv"))
@@ -263,6 +268,9 @@ loadObs <- function(locationId, maxLoops = 1000, date_after = "2025-04-25", date
         return(NULL)
       }
       
+      # Backward compatibility so we don't need to set the name on every function call 
+      projectName <- ifelse(is.null(projectName), names(projectId), projectName)
+      
       resultsDf <- rbindlist(obsList, fill = TRUE)  |>
             unnest_wider(species_detail, names_sep = "_") |>
             unnest_wider(point, names_sep = "_") |>
@@ -277,7 +285,7 @@ loadObs <- function(locationId, maxLoops = 1000, date_after = "2025-04-25", date
               # Create similar structure to iNaturalist
               time_observed_at = glue("{date} {time}:00") |> as.character(),
               project.id = locationId,
-              project.name = names(locationId),
+              project.name = locationName,
               project.type = "obs",
               user.id = user_detail$id,
               uri_html = glue("<a href='{permalink}'>{permalink}</a>"),
@@ -360,14 +368,14 @@ filterSpeciesLevelResearch <- function(df){
 loadAll <- function(){
   future_iNat <- future({
     message("Starting iNat data fetch...")
-    data_list <- purrr::map(projectIds, loadINat)
+    data_list <- purrr::imap(projectIds, \(id, idx) loadINat(id, idx))
     message("Finished iNat data fetch.")
     data.table::rbindlist(data_list, fill = TRUE)
   })
   
   future_Obs <- future({
     message("Starting Obs data fetch...")
-    data_list <- purrr::map(locationIds, loadObs)
+    data_list <- purrr::imap(locationIds, \(id, idx) loadObs(id, idx))
     message("Finished Obs data fetch.")
     data.table::rbindlist(data_list, fill = TRUE)
   })
