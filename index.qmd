@@ -25,18 +25,10 @@ Links zu den offiziellen Seiten:
 inatResultsList <- list()
 resultsDfList <- list()
 for(i in 1:length(projectIds)){
-  tempResult <- loadINat(projectIds[i])
-  if(!is.null(tempResult)){
-    write_csv(tempResult, paste0("data/inat_", projectIds[i], ".csv"), quote = "all")
-    inatResultsList[[i]] <- tempResult
-  }
+  inatResultsList[[i]] <- loadINat(projectIds[i])
 }
 for(i in 1:length(locationIds)){
-  tempResult <- loadObs(locationIds[i])
-  if(!is.null(tempResult)){
-    write_csv(tempResult, paste0("data/obs_", locationIds[i], ".csv"), quote = "all")
-    resultsDfList[[i]] <- tempResult
-  }
+  resultsDfList[[i]] <- loadObs(locationIds[i])
 }
 resultsDf <- bind_rows(inatResultsList, resultsDfList)
 

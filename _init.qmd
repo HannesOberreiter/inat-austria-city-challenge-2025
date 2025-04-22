@@ -46,9 +46,9 @@ locationIds <- c("Salzburg" = "606489", "Vorarlberg" = "606492")
 #| cache: true
 
 if (file.exists('data/checkList.rds')) {
-  checkList = readRDS('data/checkList.rds')
-  birdsList = readRDS('data/birdsList.rds')
-  taxas = readRDS('data/taxas.rds')
+  checkList <- readRDS('data/checkList.rds')
+  birdsList <- readRDS('data/birdsList.rds')
+  taxas <- readRDS('data/taxas.rds')
 } else {
   # RedList
   checkList <- fread(
@@ -92,7 +92,7 @@ loadINat <- function(projectId, maxLoops = 1000){
      exp = {
       checkIfFileExists <- file.exists(glue("data/inat_{projectId}.csv"))
       if(checkIfFileExists){
-        print("File exists, loading from file")
+        message("File exists, loading from file")
         resultsDf <- fread(
           glue("data/inat_{projectId}.csv"), sep = ",", dec=".", stringsAsFactors = FALSE, encoding = "UTF-8", colClasses = "character"
         )
@@ -110,16 +110,16 @@ loadINat <- function(projectId, maxLoops = 1000){
         start_time <- Sys.time()
 
         obsUrl <- glue("{apiEndpoint}?{staticQuery}&id_above={aboveId}")
-        print(obsUrl)
+        message(obsUrl)
         obsFetch <- fetchTxt(obsUrl) |> jsonlite::fromJSON()
         totalResults <- obsFetch$total_results
         if(totalResults == 0){
-          print("Empty results")
+          message("Empty results")
           break;
         }
         
         obsTempResults <- obsFetch$results |> unnest(c(taxon, user), names_sep = ".")
-        aboveId = max(obsTempResults$id)
+        aboveId <- max(obsTempResults$id)
         obsList[[loopCounter]] <- obsTempResults |>
           mutate(across(everything(), as.character)) |>
           mutate(
@@ -129,19 +129,19 @@ loadINat <- function(projectId, maxLoops = 1000){
             )
         
         if(totalResults <= perPage){
-          print("No more fetches needed")
+          message("No more fetches needed")
           break;
         }
         
-        print("Remaining Obs")
-        print(totalResults - perPage)
-        print("Loops to finish")
-        print((totalResults - perPage) / perPage)
-        print("Loops done")
-        print(loopCounter)
+        message("Remaining Obs")
+        message(totalResults - perPage)
+        message("Loops to finish")
+        message((totalResults - perPage) / perPage)
+        message("Loops done")
+        message(loopCounter)
         
         if(loopCounter >= maxLoops){
-          print("Breaking early because max loop limit")
+          warning("Breaking early because max loop limit")
           break;
         }
         
@@ -151,7 +151,7 @@ loadINat <- function(projectId, maxLoops = 1000){
         Sys.sleep(sleep_time)
       }
       if(length(obsList) == 0){
-        print("No results")
+        message("No results")
         return(NULL)
       }
       resultsDf <- bind_rows(obsList) |>
@@ -164,6 +164,8 @@ loadINat <- function(projectId, maxLoops = 1000){
           uri_html = glue("<a href='{uri}'>{id}</a>"),
         ) |>
         distinct(uuid, .keep_all = TRUE) # catch any possible double entries due to our loop logic
+
+      write_csv(resultsDf, paste0("data/inat_", projectId, ".csv"), quote = "all")
       return(resultsDf)
      },
     error = function(e){
@@ -195,7 +197,7 @@ loadObs <- function(locationId, maxLoops = 1000, date_after = "2025-04-25", date
      exp = {
       checkIfFileExists <- file.exists(glue("data/obs_{locationId}.csv"))
       if(checkIfFileExists){
-        print("File exists, loading from file")
+        message("File exists, loading from file")
         resultsDf <- fread(
           glue("data/obs_{locationId}.csv"), sep = ",", dec=".", stringsAsFactors = FALSE, encoding = "UTF-8", colClasses = "character"
         )
@@ -211,11 +213,11 @@ loadObs <- function(locationId, maxLoops = 1000, date_after = "2025-04-25", date
       while (TRUE) {
         start_time <- Sys.time()
 
-        print(obsUrl)
+        message(obsUrl)
         obsFetch <- fetchTxt(obsUrl) |> jsonlite::fromJSON()
         totalResults <- obsFetch$count
         if(totalResults == 0){
-          print("Empty results")
+          message("Empty results")
           break;
         }
         
@@ -225,25 +227,25 @@ loadObs <- function(locationId, maxLoops = 1000, date_after = "2025-04-25", date
         obsList[[loopCounter]] <- obsTempResults
         
         if(totalResults <= perPage){
-          print("No more fetches needed")
+          message("No more fetches needed")
           break;
         }
         
         if(is.null(obsFetch$`next`)){
-          print('All fetched')
+          message('All fetched')
           break;
         }
         obsUrl <- obsFetch$`next`
         
-        print("Remaining Obs")
-        print(totalResults - perPage)
-        print("Loops to finish")
-        print((totalResults - perPage) / perPage)
-        print("Loops done")
-        print(loopCounter)
+        message("Remaining Obs")
+        message(totalResults - perPage)
+        message("Loops to finish")
+        message((totalResults - perPage) / perPage)
+        message("Loops done")
+        message(loopCounter)
         
         if(loopCounter >= maxLoops){
-          print("Breaking early because max loop limit")
+          warning("Breaking early because max loop limit")
           break;
         }
         
@@ -254,7 +256,7 @@ loadObs <- function(locationId, maxLoops = 1000, date_after = "2025-04-25", date
       }
       
       if(length(obsList) == 0){
-        print("No results")
+        message("No results")
         return(NULL)
       }
       
@@ -285,7 +287,8 @@ loadObs <- function(locationId, maxLoops = 1000, date_after = "2025-04-25", date
             # Drop nested columns and convert all to chr for joining with iNat
             select(-c("point_coordinates", "user_detail", "location_detail", "links", "details")) |>
             mutate(across(everything(), as.character))
-
+      
+      write_csv(resultsDf, paste0("data/obs_", locationId, ".csv"), quote = "all")
       return(resultsDf)
      },
     error = function(e){
