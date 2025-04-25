@@ -178,7 +178,7 @@ if(!is.null(resultsDf)){
 }
 if(!is.null(resultsINat)){
   isBirder <- resultsINat |>
-    filter(project.id == 'inat' & class == 'Aves') |>
+    filter(project.type == 'inat' & class == 'Aves') |>
     count(user.id, user.name) |>
     slice_max(n = 1, order_by = n, with_ties = FALSE)
 } else {
