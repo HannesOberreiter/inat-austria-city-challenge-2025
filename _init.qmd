@@ -90,7 +90,7 @@ fetchTxt <- function(url){
 }
 
 # iNaturalist
-loadINat <- function(projectId, projectName, maxLoops = 1000){
+loadINat <- function(projectId, projectName = NULL, maxLoops = 1000){
    tryCatch(
      exp = {
       checkIfFileExists <- file.exists(glue("data/inat_{projectId}.csv"))
@@ -157,19 +157,21 @@ loadINat <- function(projectId, projectName, maxLoops = 1000){
         message("No results")
         return(NULL)
       }
-      resultsDf <- data.table::rbindlist(obsList, fill = TRUE)
-      resultsDf <- taxas[resultsDf, on = .(id = taxon.id)]
-      
+
       # Backward compatibility so we don't need to set the name on every function call 
       projectName <- ifelse(is.null(projectName), names(projectId), projectName)
       
-      resultsDf <- resultsDf |>
+      resultsDf <- bind_rows(obsList) |>
+        left_join(taxas, by = c('taxon.id' = 'id')) |>
         mutate(
           user.name = ifelse(is.na(user.name) | user.name == '', user.login, user.name),
           project.id = projectId,
           project.name = projectName,
           project.type = "inat",
           uri_html = glue("<a href='{uri}'>{id}</a>"),
+          
+          # needed to work with obs
+          validation_status = ""
         ) |>
         distinct(uuid, .keep_all = TRUE) # catch any possible double entries due to our loop logic
 
@@ -200,7 +202,7 @@ lookup <- jsonlite::fromJSON("data/lookup.json") |>
 
 
 # Observation.org
-loadObs <- function(locationId, locationName, maxLoops = 1000, date_after = "2025-04-25", date_before = "2025-04-28"){
+loadObs <- function(locationId, locationName = NULL, maxLoops = 1000, date_after = "2025-04-25", date_before = "2025-04-28"){
    tryCatch(
      exp = {
       checkIfFileExists <- file.exists(glue("data/obs_{locationId}.csv"))
@@ -230,6 +232,17 @@ loadObs <- function(locationId, locationName, maxLoops = 1000, date_after = "202
         }
         
         obsTempResults <- obsFetch$results
+        
+        obsTempResults <- obsTempResults |> 
+            unnest_wider(species_detail, names_sep = "_") |>
+            unnest_wider(point, names_sep = "_") |>
+            drop_na(point_type, point_coordinates) |>
+            mutate(
+              latitude = purrr::map_dbl(point_coordinates, ~ .x[[1]][2]),
+              longitude = purrr::map_dbl(point_coordinates, ~ .x[[1]][1]),
+              location = glue("{latitude},{longitude}")
+            ) |>
+            select(-point_coordinates, -observer_location)
         
         aboveId = max(obsTempResults$id)
         obsList[[loopCounter]] <- obsTempResults
@@ -269,13 +282,9 @@ loadObs <- function(locationId, locationName, maxLoops = 1000, date_after = "202
       }
       
       # Backward compatibility so we don't need to set the name on every function call 
-      projectName <- ifelse(is.null(projectName), names(projectId), projectName)
+      locationName <- ifelse(is.null(locationName), names(locationId), locationName)
       
-      resultsDf <- rbindlist(obsList, fill = TRUE)  |>
-            unnest_wider(species_detail, names_sep = "_") |>
-            unnest_wider(point, names_sep = "_") |>
-            drop_na(point_type, point_coordinates) |>
-
+      resultsDf <- bind_rows(obsList)  |>
             left_join(lookup$species_type, by = c("species_detail_type" = "id")) |>
             left_join(lookup$rarity, by = c("rarity" = "id")) |>
             left_join(lookup$validation_status, by = c("validation_status" = "id")) |>
@@ -290,13 +299,13 @@ loadObs <- function(locationId, locationName, maxLoops = 1000, date_after = "202
               user.id = user_detail$id,
               uri_html = glue("<a href='{permalink}'>{permalink}</a>"),
               user.name = ifelse(is.na(user_detail$name) | user_detail$name == '', user_detail$login, user_detail$name),
-              location = glue("{map_dbl(point_coordinates, ~ .x[[1]][2])},{map_dbl(point_coordinates, ~ .x[[1]][1])}"),
               uri = permalink,
               scientificName = species_detail_scientific_name,
               vernacularName = species_detail_name,
+              quality_grade = ""
             ) |>
             # Drop nested columns and convert all to chr for joining with iNat
-            select(-c("point_coordinates", "user_detail", "location_detail", "links", "details")) |>
+            select(-c("user_detail", "location_detail", "links", "details")) |>
             mutate(across(everything(), as.character))
       
       fwrite(resultsDf, paste0("data/obs_", locationId, ".csv"), quote = TRUE)
@@ -370,20 +379,20 @@ loadAll <- function(){
     message("Starting iNat data fetch...")
     data_list <- purrr::imap(projectIds, \(id, idx) loadINat(id, idx))
     message("Finished iNat data fetch.")
-    data.table::rbindlist(data_list, fill = TRUE)
+    bind_rows(data_list)
   })
   
   future_Obs <- future({
     message("Starting Obs data fetch...")
     data_list <- purrr::imap(locationIds, \(id, idx) loadObs(id, idx))
     message("Finished Obs data fetch.")
-    data.table::rbindlist(data_list, fill = TRUE)
+    bind_rows(data_list)
   })
   
   message("Waiting for data fetching to complete...")
   combined_inat_data <- value(future_iNat)
   combined_obs_data <- value(future_Obs)
-  resultsDf <- rbindlist(list(combined_inat_data, combined_obs_data), fill = TRUE, use.names = TRUE)
+  resultsDf <- bind_rows(list(combined_inat_data, combined_obs_data))
   message("Data fetching complete.")
   return(resultsDf)
 }
