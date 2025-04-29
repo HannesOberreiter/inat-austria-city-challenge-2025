@@ -172,11 +172,36 @@ if(!is.null(resultsDf)){
       nameLength = nchar(scientificName)
     ) |>
     slice_max(n = 1, order_by = nameLength, with_ties = FALSE)
+
+  longestDistance <- resultsDf |>
+    separate(location, c('latitude', 'longitude'), sep = ',', remove  = FALSE, convert = TRUE) |>
+    group_by(user.id, user.name) |>
+    group_split() |>
+    furrr::future_map_dfr(function(user_df) {
+      if(nrow(user_df) > 1) {
+        coords <- cbind(user_df$longitude, user_df$latitude)
+        dist_matrix <- geosphere::distm(coords, fun =   geosphere::distHaversine) / 1000 # in km
+        tibble(
+          user.id = user_df$user.id[1], 
+          user.name = user_df$user.name[1],
+          distance = max(dist_matrix, na.rm = TRUE)
+        )
+      } else {
+        # For users with only one observation, distance is 0
+        tibble(
+          user.id = user_df$user.id[1], 
+          user.name = user_df$user.name[1],
+          distance = 0
+        )
+      }
+    }) |>
+    slice_max(n = 1, order_by = distance, with_ties = FALSE)
 } else {
   mostDuplicatedObservations <- tibble(user.id = c(0), user.name = c(0), scientificName = c(0), n = c(0))
   longestName <- tibble(scientificName = c(0), nameLength = c(0))
+  longestDistance <- tibble(user.id = c(0), user.name = c(0), distance = c(0))
 }
-if(!is.null(resultsINat)){
+if(exists("resultsINat") && !is.null(resultsINat)){
   isBirder <- resultsINat |>
     filter(project.type == 'inat' & class == 'Aves') |>
     count(user.id, user.name) |>
@@ -185,9 +210,22 @@ if(!is.null(resultsINat)){
   isBirder <- tibble(user.id = c(0), user.name = c(0), n = c(0))
 }
 
+if(any(!is.na(resultsDf$time_observed_at))) {
+  mostActiveDayHour <- resultsDf |>
+      drop_na(time_observed_at) |>
+      mutate(
+        time_observed_at = lubridate::ymd_hms(time_observed_at, tz = "Europe/Vienna", quiet = TRUE),
+        day = lubridate::date(time_observed_at),
+        hour = lubridate::hour(time_observed_at)
+      ) |>
+      count(day, hour) |>
+      slice_max(n = 1, order_by = n, with_ties = FALSE)
+} else {
+  mostActiveDayHour <- tibble(day = as.Date("1989-01-05"), hour = 0, n = c(0))
+}
 ```
 
-Der/Die User/in (auch bekannt als Birder) **`r isBirder$user.name[1]`** hat mit `r isBirder$n[1]` Vogelbeobachtungen die meisten Beiträge in dieser Kategorie hochgeladen. Besonders häufig, nämlich `r mostDuplicatedObservations$n[1]` Mal, hat der/die User/in **`r mostDuplicatedObservations$user.name[1]`** die Art *`r mostDuplicatedObservations$scientificName[1]`* beobachtet. Das Taxon mit dem längsten wissenschaftlichen Namen ist **_`r longestName$scientificName[1]`_** mit `r longestName$nameLength[1]` Zeichen.
+Der/Die User/in (auch bekannt als Birder) **`r isBirder$user.name[1]`** hat mit `r isBirder$n[1]` Vogelbeobachtungen die meisten Beiträge in dieser Kategorie hochgeladen. Besonders häufig, nämlich `r mostDuplicatedObservations$n[1]` Mal, hat der/die User/in **`r mostDuplicatedObservations$user.name[1]`** die Art *`r mostDuplicatedObservations$scientificName[1]`* beobachtet. Das Taxon mit dem längsten wissenschaftlichen Namen ist **_`r longestName$scientificName[1]`_** mit `r longestName$nameLength[1]` Zeichen. Als Wanderer/in hat **`r longestDistance$user.name[1]`** die größte Distanz von `r round(longestDistance$distance[1], 2)` km zwischen zwei Beobachtungen zurückgelegt. In der Stunde `r mostActiveDayHour$hour[1]` am `r mostActiveDayHour$day[1]` wurden die meisten Beobachtungen gemacht, nämlich `r mostActiveDayHour$n[1]` Mal.
 
 ## Top Beobachter/innen
 
